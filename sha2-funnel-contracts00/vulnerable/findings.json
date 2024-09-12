@@ -1,0 +1,198 @@
+{
+  "description": {
+    "project_name": "sha2 funnel-contracts",
+    "compiler_versions": ["0.8.15"]
+  },
+  "findings": [
+    {
+      "title": "Denial of Service Vulnerability",
+      "reported_impact": "high",
+      "reported_likelihood": "high",
+      "cwe_classification": 190,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Overflow",
+      "vulnerable_functions": [
+        "Funnel::allowance()",
+        "Funnel::_remainingAllowance()",
+        "Funnel::transferFrom()"
+      ],
+      "lines": "207-213, 215-225, 243-260",
+      "description": "The internal function _remainingAllowance() will revert with overflow in situations where the approveRenewable() or permitRenewable() functions are used to approve a max uint256 value with a recoveryRate > 0. The overflow can occur with different edge cases: ddapproveRenewable(, type(uint256).max - type(uint192).max + 1, type(uint192).max); approveRenewable(, type(uint256).max - type(uint64).max + 1, type(uint64).max) The _remainingAllowance() function is used by allowance() and transferFrom(). These functions will be unusable after such approval."
+    },
+    {
+      "title": "Unverifiable Logic",
+      "reported_impact": "high",
+      "reported_likelihood": "high",
+      "cwe_classification": 829,
+      "vulnerability_class": "Unexpected Transfers",
+      "vulnerability_subclass": "Untrusted sources",
+      "vulnerable_functions": ["Funnel::ERC20", "Funnel::SafeTransferLib"],
+      "lines": "4-5",
+      "description": "The Funnel contract uses the functionality of the external solmatecontracts, which are out of the scope of this audit and whose description states that it is an experimental software. Therefore, their security cannot be guaranteed, and their usage may lead to unexpected behavior"
+    },
+    {
+      "title": "Data Consistency",
+      "reported_impact": "high",
+      "reported_likelihood": "high",
+      "cwe_classification": 0,
+      "vulnerability_class": "Denial of Service",
+      "vulnerability_subclass": "Data inconsistency",
+      "vulnerable_functions": [
+        "Funnel::allowance()",
+        "Funnel::transfer()",
+        "Funnel::transferFrom()"
+      ],
+      "lines": "207-213, 400-402, 243-260",
+      "description": "The approvals performed in the Funnel contract are not connected with the approvals done in the _baseToken tokens. The EIP-5827 should check if it has enough allowance in _baseToken in functions allowance(), transferFrom(), and transfer(). In situations where the allowance in _baseToken is less than the allowance calculated by Funnel, there will be data inconsistency and denial of service in transfer functions."
+    },
+    {
+      "title": "Inefficient Gas Model",
+      "reported_impact": "medium",
+      "reported_likelihood": "medium",
+      "cwe_classification": 409,
+      "vulnerability_class": "Gas usage",
+      "vulnerability_subclass": "",
+      "vulnerable_functions": ["Funnel::"],
+      "lines": "",
+      "description": "The Funnel smart contract imports and uses the ERC20 contract directly for the _baseToken storage variable. It is best practice to use interfaces when interacting with external contracts. Importing and using an ERC20 smart contract directly may lead to higher deployment Gas expenses when deploying new funnels."
+    },
+    {
+      "title": "Inefficient Gas Model",
+      "reported_impact": "medium",
+      "reported_likelihood": "medium",
+      "cwe_classification": 409,
+      "vulnerability_class": "Gas usage",
+      "vulnerability_subclass": "",
+      "vulnerable_functions": ["FunnelFactory::"],
+      "lines": "",
+      "description": "The FunnelFactory smart contract imports the Funnel contract directly to use it in the initialization process. It is best practice to use interfaces when interacting with external contracts. Importing contracts directly increases the bytecode size of the deployed smart contract."
+    },
+    {
+      "title": "Unchecked Transfer",
+      "reported_impact": "medium",
+      "reported_likelihood": "medium",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Error handling",
+      "vulnerable_functions": ["Funnel::transfer()"],
+      "lines": "400-402",
+      "description": "An unchecked transferFrom() function is used in the transfer() function. Tokens that do not follow the ERC20 standard (such as USDT) may return false in the case of a transfer failure, or they may not return any value at all. This may lead to denial of service vulnerabilities when interacting with non-standard ERC20 tokens."
+    },
+    {
+      "title": "Violated Checks-Effects-Interactions Pattern",
+      "reported_impact": "medium",
+      "reported_likelihood": "medium",
+      "cwe_classification": 691,
+      "vulnerability_class": "Reentrancy",
+      "vulnerability_subclass": "",
+      "vulnerable_functions": ["FunnelFactory::deployFunnelForToken()"],
+      "lines": "26-39",
+      "description": "During the function execution, some state variables are updated after the external calls. This may lead to reentrancies, race conditions, and denial of service vulnerabilities during implementation of new functionality."
+    },
+    {
+      "title": "Best Practice Violation - Lock of Native Tokens",
+      "reported_impact": "medium",
+      "reported_likelihood": "medium",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "Unexpected transfers",
+      "vulnerable_functions": [
+        "NativeMetaTransaction::executeMetaTransaction()"
+      ],
+      "lines": "28-54",
+      "description": "Lock of Native Tokens It is considered following best practices to avoid unclear situations and prevent common attack vectors. The contract accepts native tokens in the executeMetaTransaction() payable function, but there are no mechanisms for withdrawals. This may lead to native coins being locked in the contract."
+    },
+    {
+      "title": "Floating Pragma",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "Unlocked pragma version",
+      "vulnerable_functions": [""],
+      "lines": "",
+      "description": "Locking the pragma helps to ensure that contracts are not accidentally deployed using an outdated compiler version that might introduce bugs that affect the contract system negatively."
+    },
+    {
+      "title": "Inconsistent Usage of External Libraries",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "External Libraries",
+      "vulnerable_functions": [""],
+      "lines": "",
+      "description": "All contracts use OpenZeppelin external libraries heavily. However, the Funnel contract imports the solmate ERC20 and SafeTransferLib libraries. This is inconsistent with overall external library usage."
+    },
+    {
+      "title": "Redundant Imports",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "Gas Usage",
+      "vulnerable_functions": ["Funnel::", "FunnelFactory::", "IFunnel::"],
+      "lines": "",
+      "description": "The use of unnecessary imports will increase the Gas consumption of the code. Thus, they should be removed from the code"
+    },
+    {
+      "title": "State Variables that Could Be Declared as Constant",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "Gas Usage",
+      "vulnerable_functions": ["Funnel::"],
+      "lines": "50, 55",
+      "description": "There are variables in the contract that can be declared as constants to save Gas."
+    },
+    {
+      "title": "Missing Zero Address Validation",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validations and error handling",
+      "vulnerability_subclass": "Missing Zero Address Validation",
+      "vulnerable_functions": [
+        "Funnel::initialize",
+        "FunnelFactory::constructor",
+        "FunnelFactory::deployFunnelForToken"
+      ],
+      "lines": "60-66, 18-20, 26-39",
+      "description": "Address parameters are used without checking against the possibility of being 0x0. This can lead to unwanted external calls to 0x0"
+    },
+    {
+      "title": "Unclear Use of the Virtual Specifier",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "Redundant code",
+      "vulnerable_functions": ["Funnel::"],
+      "lines": "",
+      "description": "There are functions in the contracts that are declared with the virtual specifier. These functions are not expected to be overridden, so the use of the virtual specifier is redundant."
+    },
+    {
+      "title": "Functions that Can Be Declared External",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "",
+      "vulnerable_functions": [
+        "Funnel::initialize",
+        "Funnel::permit",
+        "Funnel::permitRenewable",
+        "Funnel::approve",
+        "Funnel::approveRenewable",
+        "Funnel::allowance",
+        "Funnel::renewableAllowance",
+        "Funnel::supportsInterface",
+        "FunnelFactory::deployFunnelForToken",
+        "FunnelFactory::ifFunnel"
+      ],
+      "lines": "60-66, 108-131, 133-155, 167-174, 176-183, 207-213, 230-237, 384-389, 26-39",
+      "description": "In order to save Gas, public functions that are never called in the contract should be declared as external."
+    }
+  ]
+}

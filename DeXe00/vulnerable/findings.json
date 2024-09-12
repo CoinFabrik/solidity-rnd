@@ -1,0 +1,399 @@
+{
+  "description": {
+    "project_name": "DeXe",
+    "compiler_versions": ["0.8.4"]
+  },
+  "findings": [
+    {
+      "title": "Unverified Interaction",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Validation",
+      "vulnerable_functions": ["TraderPoolRiskyProposal::invest()"],
+      "lines": "116-175",
+      "description": "It is possible for a trader to implement and provide a token with the possibility to change decimals at any period in time. As the DeXe system relies on decimals during price calculation, internal logic may be corrupted"
+    },
+    {
+      "title": "Flashloan Attack, Front Running Attack",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 362,
+      "vulnerability_class": "MEV",
+      "vulnerability_subclass": "Front Running",
+      "vulnerable_functions": [
+        "UniswapV2PathFinder::getUniV2PathWithPriceOut()",
+        "UniswapV2PathFinder::getUniV2PathWithPriceIn()"
+      ],
+      "lines": "13-20, 32-49",
+      "description": "The library uses Uniswap’s getAmountsOut and getAmountsIn functions to determine the exchange rate for the assets. Those functions provide the price based on the current state of a liquidity pool that may be easily manipulated by flasholans."
+    },
+    {
+      "title": "Requirements Violation",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 841,
+      "vulnerability_class": "Logic Flaw",
+      "vulnerability_subclass": "Improper Enforcement of Behavioral Workflow",
+      "vulnerable_functions": ["TraderPoolRiskyProposal::create()"],
+      "lines": "67-114",
+      "description": "In a risky pool, traders can trade any token, even those created by them, and add liquidity to Uniswap. This allows the trader to always be in profit by selling their tokens at a Higher price, and closing DeXe trades at a loss."
+    },
+    {
+      "title": "Highly Permissive Role Access",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": [
+        "CoreProperties::setDEXECommissionPercentages()",
+        "CoreProperties::setTraderCommissionPercentages()"
+      ],
+      "lines": "90-100, 102-108",
+      "description": "The owner of the contract could change commissions at any period of time. The upper bound limit for the commission is not set up. This may lead to the manipulation of fees."
+    },
+    {
+      "title": "Requirements Violation",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 1068,
+      "vulnerability_class": "Logic Flaw",
+      "vulnerability_subclass": "Documentation",
+      "vulnerable_functions": ["Insurance::acceptClaim()"],
+      "lines": "89-115",
+      "description": "According to the documentation, it should be possible to view users and their deposits in an insurance pool. However, the functionality is not implemented."
+    },
+    {
+      "title": "Assets Integrity; Undocumented Behavior",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 1068,
+      "vulnerability_class": "Logic Flaw",
+      "vulnerability_subclass": "Documentation",
+      "vulnerable_functions": ["TraderPoolInvestProposal::withdraw()"],
+      "lines": "156-164",
+      "description": "TraderPoolInvestProposal allows traders to withdraw all user's investments from the pool. There is no guarantee that users would be able to receive their funds back."
+    },
+    {
+      "title": "Highly Permissive Role Access",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["ERC20Sale::burn()"],
+      "lines": "49-51",
+      "description": "The owner of the contract may burn any user funds"
+    },
+    {
+      "title": "Denial of Service Vulnerability",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 400,
+      "vulnerability_class": "Denial of Service",
+      "vulnerability_subclass": "Uncontrolled Resource Consumption",
+      "vulnerable_functions": ["GovValidators::duration()"],
+      "lines": "51, 59, 64, 77, 96, 117, 124, 182, 186",
+      "description": "The voting duration should be greater than a minimal value. This may lead to not reaching a quorum as the proposal quickly comes to a Defeated state."
+    },
+    {
+      "title": "Highly Permissive Role Access",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["GovValidators::changeBalances()"],
+      "lines": "135-140",
+      "description": "The owner of the contract may change validators at any moment"
+    },
+    {
+      "title": "Integer Overflow",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 190,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Integer Overflow",
+      "vulnerable_functions": ["GovUserKeeper::_setERC721Address()"],
+      "lines": "643-667",
+      "description": "The function _setERC721Address has the require(nftsTotalSupply > 0) check implemented. However, due to downcasting of nftsTotalSupply to uint128, this condition could be bypassed."
+    },
+    {
+      "title": "Denial of Service Vulnerability",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 190,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Integer Overflow",
+      "vulnerable_functions": [
+        "GovValidators::createExternalProposal()",
+        "GovValidators::createInternalProposal()",
+        "GovPoolCreate::createProposal()"
+      ],
+      "lines": "70-113, 115-130, 30-78",
+      "description": "In case of setting voting duration close to the uint64 max value, voteEnd voting field may be overflowed and newly created votings can come to a Defeated state."
+    },
+    {
+      "title": "Highly Permissive Role Access",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["Insurance::setDependencies()"],
+      "lines": "47-52",
+      "description": "The injector is able to change the DeXe token address on the contract. This may lead to users being unable to withdraw their deposits and the injector may take control over the insurance pool."
+    },
+    {
+      "title": "Denial of Service Vulnerability",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 190,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Integer Overflow",
+      "vulnerable_functions": ["GovValidators::createInternalProposal()"],
+      "lines": "70-113",
+      "description": "Each new proposal creates a new structure with snapshotId as its unique identifier. snapshotId is capped by a uint32 type, which has a max value of 4294967295. The potential attacker may max out this value in the event of a potential gas price drop."
+    },
+    {
+      "title": "Access Control Violation; Race Conditions",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Authorization",
+      "vulnerable_functions": [
+        "CoreProperties::setDependencies()",
+        "PriceFeed::setDependencies()",
+        "GovPool::setDependencies()",
+        "Insurance::setDependencies()",
+        "BasicTraderPool::setDependencies()",
+        "InvestTraderPool::setDependencies()",
+        "TraderPool::setDependencies()",
+        "TraderPoolProposal::setDependencies()"
+      ],
+      "lines": "39-45, 46-53, 134-139, 47-52, 43-47, 46-50, 100-107, 96-100",
+      "description": "Since, for the first time, the setter functions could be called by anyone, there is a risk of race conditions that may result in the inconsistent state of the contract. This may lead to access to critical state variables by an unauthorized user."
+    },
+    {
+      "title": "Upgradeability Issues",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 1006,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Upgradeability",
+      "vulnerable_functions": ["TraderPool::", "TraderPoolProposal::"],
+      "lines": "",
+      "description": "The contracts do not follow the upgradability best practices by not adding a gap in the contract storage."
+    },
+    {
+      "title": "Requirements Violation; Misleading Naming",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 1110,
+      "vulnerability_class": "Logic Flaw",
+      "vulnerability_subclass": "Documentation",
+      "vulnerable_functions": ["Insurance::buyInsurance()"],
+      "lines": "54-68",
+      "description": "The buyInsurance function does not reflect exactly what happens with the user funds."
+    },
+    {
+      "title": "Best Practice Violation - CEI Pattern Violation",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 696,
+      "vulnerability_class": "Reentrancy",
+      "vulnerability_subclass": "Incorrect Behavior Order",
+      "vulnerable_functions": [
+        "TraderPoolInvestProposal::create()",
+        "TraderPoolInvestProposal::invest()",
+        "TraderPoolRiskyProposal::create()",
+        "TraderPoolRiskyProposal::invest()",
+        "TraderPoolRiskyProposal::_investActivePortfolio()"
+      ],
+      "lines": "63-93, 95-122, 67-114, 116-175, 380-412",
+      "description": "The Checks-Effects-Interactions pattern is violated. In some functions, the state variables are modified after doing external calls"
+    },
+    {
+      "title": "Inconsistent Data - Unused Return Value",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 252,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Unchecked Return Value",
+      "vulnerable_functions": [
+        "Insurance::buyInsurance()",
+        "Insurance::_payout()",
+        "Insurance::withdraw()"
+      ],
+      "lines": "54-58, 151-167, 70-87",
+      "description": "Multiple functions perform transfer calls on the _dexe token but ignore the return value."
+    },
+    {
+      "title": "Best Practice Violation - Unfinalized Functionality",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 190,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Improper Enforcement of Behavioral Workflow",
+      "vulnerable_functions": ["GovValidators::createExternalProposal()"],
+      "lines": "115-130",
+      "description": "It is not possible to execute an external proposal even if a quorum is reached. This may lead to double execution of the proposal off-chain as the proposal state could not be updated."
+    },
+    {
+      "title": "Contradiction - Denial of Service",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 691,
+      "vulnerability_class": "Denial of Service",
+      "vulnerability_subclass": "Insufficient Control Flow Management",
+      "vulnerable_functions": ["GovValidators::onlyValidator()"],
+      "lines": "43-46",
+      "description": "The onlyValidator modifier uses current user balances to identify validators. However, voting is only possible for those who have balances at the moment of proposal creation. This may lead to an inability to reach a quorum on proposals due to some validators not passing the modifier."
+    },
+    {
+      "title": "Contradiction - Invalid Return Action",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Improper Check or Handling of Exceptional Conditions",
+      "vulnerable_functions": ["PoolFactory::predictGovAddress()"],
+      "lines": "231",
+      "description": "The function contains the check (bytes(poolName).length == 0) which returns address(0). This might cause a logic error, because the relying code might not expect a zero address. Instead, an error should be thrown clearly marking that the input parameter is invalid."
+    },
+    {
+      "title": "Inconsistent Data - Sign of Unfinalized Code",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 1068,
+      "vulnerability_class": "Logic Flaw",
+      "vulnerability_subclass": "Documentation",
+      "vulnerable_functions": [
+        "PoolFactory::_validateGovPoolWithTokenSaleParameters()"
+      ],
+      "lines": "423-432",
+      "description": "The _validateGovPoolWithTokenSaleParameters function contains the check require(parameters. ... Executors[0] == address(0)). If the value should always be equal to 0x0 it may be directly overwritten there."
+    },
+    {
+      "title": "Best Practice Violation - Unstable Import",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 1104,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Use of Unmaintained Third Party Components",
+      "vulnerable_functions": [],
+      "lines": "",
+      "description": "The project allows different versions of a custom import @dlsl/dev-modules: ^1.8.1. This may lead to unexpected and untested code being deployed."
+    },
+    {
+      "title": "Floating Pragma",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 1104,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Use of Unmaintained Third Party Components",
+      "vulnerable_functions": [],
+      "lines": "",
+      "description": "Locking the pragma helps ensure that contracts do not accidentally get deployed using an outdated compiler version"
+    },
+    {
+      "title": "Redundant Import",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 1164,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Irrelevant Code",
+      "vulnerable_functions": [],
+      "lines": "",
+      "description": "Unused imports should be removed from the contracts."
+    },
+    {
+      "title": "Missing Events",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 778,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Missing Events",
+      "vulnerable_functions": [
+        "PriceFeed::addPathTokens()",
+        "PriceFeed::removePathTokens()",
+        "CoreProperties::*"
+      ],
+      "lines": "56-58, 60-62",
+      "description": "Events for critical state changes should be emitted for tracking things off-chain."
+    },
+    {
+      "title": "Unindexed Events",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 696,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Improper Adherence to Coding Standards",
+      "vulnerable_functions": ["PoolFactory::*", "TraderPool::*"],
+      "lines": "",
+      "description": "Having indexed parameters in the events makes it easier to search for these events using indexed parameters as filters."
+    },
+    {
+      "title": "Function Which May Be Declared Private",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 710,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Improper Adherence to Coding Standards",
+      "vulnerable_functions": ["PoolFactory::*"],
+      "lines": "",
+      "description": "There is no added value in declaring non-public functions as internal in a non-inherited contract."
+    },
+    {
+      "title": "Redundant Statement",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 1164,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Irrelevant Code",
+      "vulnerable_functions": [
+        "GovValidatorsToken::mint()",
+        "GovValidatorsToken::burn()"
+      ],
+      "lines": "20, 24",
+      "description": "The onlyValidator check on the functions is redundant as the functions call _beforeTokenTransfer functions internally, which is under the modifier."
+    },
+    {
+      "title": "Missing Zero Address Validation",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Zero Address Validation",
+      "vulnerable_functions": [
+        "GovPool::__GovPool_init()",
+        "GovSettings::__GovSettings_init()",
+        "BasicTraderPool::__BasicTraderPool_init()",
+        "InvestTraderPool:: __InvestTraderPool_init()"
+      ],
+      "lines": "104-132, 19-61, 30-47, 33-50",
+      "description": "Address parameters are used without checking against the possibility of 0x0."
+    },
+    {
+      "title": "Shadowing State Variables",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 710,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Improper Adherence to Coding Standards",
+      "vulnerable_functions": [
+        "TraderPool::__TraderPool_init()",
+        "InvestTraderPool::__InvestTraderPool_init()",
+        "BasicTraderPool::__BasicTraderPool_init()",
+        "GovValidatorsToken::constructor()",
+        "ERC721Power::constructor()",
+        "ERC721Multiplier::constructor()"
+      ],
+      "lines": "89-98, 33-44, 30-41, 48-68, 46-67, 23",
+      "description": "State variables should not be shadowed in order to keep abstraction levels clear."
+    }
+  ]
+}

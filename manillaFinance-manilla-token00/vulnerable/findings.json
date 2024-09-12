@@ -1,0 +1,55 @@
+{
+  "description": {
+    "project_name": "Manilla token",
+    "compiler_versions": ["0.8.0"]
+  },
+  "findings": [
+    {
+      "title": "Requirements Violation",
+      "reported_impact": "high",
+      "reported_likelihood": "medium",
+      "cwe_classification": 0,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing validation",
+      "vulnerable_functions": ["manilla::"],
+      "lines": "",
+      "description": "The implementation of the system or function does not adhere to the high-level, broad system, technical, or functional requirements. The provided documentation states that the total token supply is 1 billion. However, the implementation has no limitation implemented to make sure this number is not exceeded. This can lead to minting more tokens than intended"
+    },
+    {
+      "title": "Data Consistency",
+      "reported_impact": "high",
+      "reported_likelihood": "medium",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access control",
+      "vulnerability_subclass": "Authorization",
+      "vulnerable_functions": ["manilla::"],
+      "lines": "",
+      "description": "The constructor mints tokens to a user-supplied address, adminAccount. This address can be different from the caller. This can lead to minting more tokens than intended"
+    },
+    {
+      "title": "Floating Pragma",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "Unlocked pragma version",
+      "vulnerable_functions": ["manilla::"],
+      "lines": "",
+      "description": "The project uses floating pragmas ^0.8.0. This may result in the contracts being deployed using the wrong pragma version, which is different from the one they were tested with. For example, they might be deployed using an outdated pragma version which may include bugs that affect the system negatively"
+    },
+    {
+      "title": "Missing Zero Address Validation",
+      "reported_impact": "low",
+      "reported_likelihood": "medium",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Zero Address Validation",
+      "vulnerable_functions": [
+        "manilla::constructor()",
+        "manilla::transferOwnership()"
+      ],
+      "lines": "",
+      "description": "Address parameters are being used without checking against the possibility of 0x0. This can lead to unwanted external calls to 0x0"
+    }
+  ]
+}

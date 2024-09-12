@@ -1,0 +1,332 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IEeseeNFTDrop",
+  "sourceName": "contracts/interfaces/IEeseeNFTDrop.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "InvalidProof",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidStage",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "MintLimitExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "MintTimestampNotInFuture",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "MintingEnded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "MintingNotStarted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PresaleStageLimitExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ZeroSaleStageDuration",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "baseURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "contractURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getSaleStage",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "index",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "baseURI",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "revealedURI",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "contractURI",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "royaltyReceiver",
+              "type": "address"
+            },
+            {
+              "internalType": "uint96",
+              "name": "royaltyFeeNumerator",
+              "type": "uint96"
+            }
+          ],
+          "internalType": "struct DropMetadata",
+          "name": "metadata",
+          "type": "tuple"
+        },
+        {
+          "internalType": "uint32",
+          "name": "_mintLimit",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "mintStartTimestamp",
+          "type": "uint32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "duration",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "perAddressMintLimit",
+              "type": "uint32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "allowListMerkleRoot",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct IEeseeNFTDrop.StageOptions[]",
+          "name": "salesOptions",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "contract IEeseeRandom",
+          "name": "_random",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_minter",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "trustedForwarder",
+          "type": "address"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint32",
+          "name": "quantity",
+          "type": "uint32"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "merkleProof",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "mint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "mintLimit",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nextTokenId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "random",
+      "outputs": [
+        {
+          "internalType": "contract IEeseeRandom",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "revealedURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "stages",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "startTimestamp",
+          "type": "uint32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "duration",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "perAddressMintLimit",
+              "type": "uint32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "allowListMerkleRoot",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct IEeseeNFTDrop.StageOptions",
+          "name": "stageOptions",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "saleStageIndex",
+          "type": "uint8"
+        },
+        {
+          "internalType": "address",
+          "name": "claimer",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "merkleProof",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "verifyCanMint",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

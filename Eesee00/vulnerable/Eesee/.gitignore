@@ -1,0 +1,12 @@
+node_modules
+.env
+package-lock.json
+coverage
+coverage.json
+typechain
+typechain-types
+.vscode
+# Hardhat files
+cache
+soljson-v0.8.17+commit.8df45f5f.js
+soljson-v0.8.21+commit.d9974bed.js

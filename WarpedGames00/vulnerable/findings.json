@@ -1,0 +1,100 @@
+{
+  "description": {
+    "project_name": "Warped Games",
+    "compiler_versions": ["0.8.11"]
+  },
+  "findings": [
+    {
+      "title": "Denial of Service",
+      "reported_impact": "Critical",
+      "reported_likelihood": "High",
+      "cwe_classification": 400,
+      "vulnerability_class": "Denial Service",
+      "vulnerability_subclass": "Resource Exhaustion",
+      "vulnerable_functions": ["WarpedTaxHandler.sol::removeNFTs()"],
+      "lines": "154-165",
+      "description": "Deletes an element from an array, but forgets to delete the place it occupies."
+    },
+    {
+      "title": "Front Running",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 0,
+      "vulnerability_class": "MEV",
+      "vulnerability_subclass": "Front Running",
+      "vulnerable_functions": [
+        "WarpedTreasuryHandler.sol::addLiquidity()",
+        "WarpedTreasuryHandler.sol::addLiquidity()",
+        "WarpedTreasuryHandler.sol::_swapTokensForEth()"
+      ],
+      "lines": "",
+      "description": "Amount values are set to 0 when interacting with Uniswap. This allows attackers to conduct frontal attacks and operations can generate unexpected amounts of tokens."
+    },
+    {
+      "title": "Denial Of Service",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 400,
+      "vulnerability_class": "Denial Service",
+      "vulnerability_subclass": "Resource Exhaustion",
+      "vulnerable_functions": ["WarpedTokenManager.sol::_getTaxBasisPoints()"],
+      "lines": "",
+      "description": "tour all NFTs and tax rates. In case the arrays are large enough to exceed the gas limit of the block, the execution may fail."
+    },
+    {
+      "title": "Data Consistency",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 672,
+      "vulnerability_class": "Data Consistency",
+      "vulnerability_subclass": "State Management",
+      "vulnerable_functions": ["WarpedPoolManager.sol::_exchangePools"],
+      "lines": "",
+      "description": "The primary pool address may be removed from the _exchangePools and be not updated in the primaryPool variable. This will result in inconsistent contract state"
+    },
+    {
+      "title": "Data Consistency",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Uniqueness Check Missing",
+      "vulnerable_functions": ["WarpedTaxHandler.sol::addNFTs()"],
+      "lines": "142-148",
+      "description": "The NFTs are not being checked for the uniqueness when they are added. This may result in duplicates and inconsistent contract state."
+    },
+    {
+      "title": "Requirement Violation- Data Consistency",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 670,
+      "vulnerability_class": "Data Consistency",
+      "vulnerability_subclass": "Requirement Violation",
+      "vulnerable_functions": ["WarpedTaxHandler.sol::setTaxRates()"],
+      "lines": "119-134",
+      "description": "In the function setTaxRates(), the requirement says :- values of `thresholds` must be placed in ascending order. There is no check done to verify this requirement."
+    },
+    {
+      "title": "Missing Event",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 778,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Missing Event",
+      "vulnerable_functions": ["WarpedTaxHandler.sol::"],
+      "lines": "",
+      "description": "Events for critical state changes should be emitted for tracking things off-chain."
+    },
+    {
+      "title": "Unchecked Transfer",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Unchecked Return Value",
+      "vulnerable_functions": ["WarpedTreasuryHandler.sol::withdraw()"],
+      "lines": "",
+      "description": "The function withdraw() does not use SafeERC20 library for checking the result of ERC20 token transfer."
+    }
+  ]
+}

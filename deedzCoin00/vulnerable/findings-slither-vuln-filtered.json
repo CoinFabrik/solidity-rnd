@@ -1,0 +1,49 @@
+{
+    "description": {
+        "project_name": "DeedzCoin",
+        "compiler_versions": [
+            "0.8.19"
+        ]
+    },
+    "findings": [
+        {
+            "title": "Arithmetic",
+            "reported_impact": "Critical",
+            "reported_likelihood": "Critical",
+            "cwe_classification": 682,
+            "vulnerability_class": "Arithmetic",
+            "vulnerability_subclass": "Arithmetic Error",
+            "vulnerable_functions": [
+                "DeedzCoin.sol::_transferSupplierRole();"
+            ],
+            "lines": "207-217",
+            "description": "The _transferSupplierRole() function in the provided code snippet has an unwanted balance allocation order, resulting in a critical failure. The balance of the old Provider is transferred to the new Provider, but immediately afterward, the new balance of the new Provider is overwritten by an arithmetic operation. Specifically, the function mistakenly sets the balance of the newProvider to safeAdd(balanceOf(oldSupplier)"
+        },
+        {
+            "title": "Redundant Balance Mapping",
+            "reported_impact": "Medium",
+            "reported_likelihood": "Medium",
+            "cwe_classification": 710,
+            "vulnerability_class": "Design Flaw",
+            "vulnerability_subclass": "Data Inconsistency",
+            "vulnerable_functions": [
+                "DeedzCoin.sol::mapping(address => uint256) public balances;"
+            ],
+            "lines": "40",
+            "description": "Overlook/Design. Create a new balance mapping, taking into account that it can be inherited from ERC20, this can generate inconsistencies in the balance data."
+        },
+        {
+            "title": "No Zero Address Validation",
+            "reported_impact": "Low",
+            "reported_likelihood": "Low",
+            "cwe_classification": 20,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Missing Check",
+            "vulnerable_functions": [
+                "DeedzCoin.sol::setSupplier()"
+            ],
+            "lines": "165-167",
+            "description": "No zero address validation"
+        }
+    ]
+}

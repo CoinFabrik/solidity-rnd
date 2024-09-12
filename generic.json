@@ -1,0 +1,1073 @@
+[
+  {
+    "title": "Redundant Balance Mapping",
+    "audit": "DeedzCoin",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Data Inconsistency",
+    "vulnerable_functions": ["DeedzCoin.sol::"],
+    "lines": "40",
+    "description": "The DeedzCoin smart contract introduces a public mapping named balances to store the balance of tokens for each address. This is redundant as the contract inherits from the ERC20 contract, which already provides a function named balanceOf() to retrieve an address's balance and maintains a private mapping _balances to store token balances for addresses. Moreover, the contract does not override or update the functions (transfer, transferFrom) from the ERC20, which means, when those functions are called, only the _balances mapping from the ERC20 will be updated, and not the balances mapping of the DeedzCoin contract. This could lead to major inconsistencies in the token balance data"
+  },
+  {
+    "title": "No Zero Address Validation",
+    "audit": "DeedzCoin",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Check",
+    "vulnerable_functions": ["DeedzCoin.sol::setSupplier()"],
+    "lines": "165-167",
+    "description": "No zero address validation"
+  },
+  {
+    "title": "Unchecked Transfer",
+    "audit": "Diverse",
+    "reported_impact": "Medium",
+    "reported_likelihood": "High",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Validation",
+    "vulnerable_functions": [
+      "XARDMStaking.sol::deposit(), withdraw(),resetRewards()"
+    ],
+    "lines": "",
+    "description": "The deposit(), withdraw() and resetRewards() functions do not use the SafeERC20 library for checking the result of ERC20 token transfers. Tokens may not follow the ERC20 standard and return a false in case of transfer failure or not return any value at all."
+  },
+  {
+    "title": "Denial of Service",
+    "audit": "Emx-dex",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Denial Service",
+    "vulnerability_subclass": "Resource Exhaustion",
+    "vulnerable_functions": ["Ark.sol::withdrawForLoss()"],
+    "lines": "44-66",
+    "description": "In the withdrawForLoss() function, it is possible to withdraw the total balance of the token. There is a require statement to prevent this, but after the require, there is a line that increases the decimals. This can cause problems with tokens having more than 18 decimals, potentially leading to a denial of service condition"
+  },
+  {
+    "title": "Insufficient Parameter Validation in addVestingSchedule() Function of Vesting Contract",
+    "audit": "Farcana",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Validation",
+    "vulnerable_functions": ["FarcanaVesting.sol::addVestingSchedule();"],
+    "lines": "60-93",
+    "description": "The function lacks requirements in the input parameters and this can lead to inaccurate data"
+  },
+  {
+    "title": "Non-Utilization of SafeERC20 for Token Transfers in Vesting Contract",
+    "audit": "Farcana",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 710,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Use of Unsafe Library",
+    "vulnerable_functions": ["FarcanaVesting.sol"],
+    "lines": "",
+    "description": "he TokenVesting contract correctly imports and declares the use of OpenZeppelin's SafeERC20 library for safer ERC20 token interactions. However, the implementation inconsistently applies these safety measures. Specifically, the claim function executes a token transfer using the standard transfer method of the ERC20 token, bypassing the safety checks provided by SafeERC20."
+  },
+  {
+    "title": "Lack of Event Emissions in Key Functions",
+    "audit": "Farcana",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Missing Event Emissions",
+    "vulnerable_functions": ["FarcanaVesting.sol"],
+    "lines": "",
+    "description": "The addVestingSchedule and changeBeneficiaryAddress functions in the vesting contract are crucial for managing vesting schedules and beneficiaries. However, both functions lack event emissions, which is a significant oversight. Events in smart contracts are essential for tracking changes on the blockchain, especially for key administrative actions"
+  },
+  {
+    "title": "Denial of Service Vulnerability",
+    "audit": "ForeProtocol",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 400,
+    "vulnerability_class": "Denial of Service",
+    "vulnerability_subclass": "Resource Exhaustion",
+    "vulnerable_functions": ["BasicMarket.sol::withdrawVerificationReward()"],
+    "lines": "305-366",
+    "description": "The withdrawVerificationReward function attempts to transfer tokens from its own address using the transferFrom method. Regular ERC20 implementations typically do not allow for this kind of transfer without prior approval calls, leading to potential denial-of-service (DoS) attacks as the function can be made to fail consistently.The addVestingSchedule and changeBeneficiaryAddress functions in the vesting contract are crucial for managing vesting schedules and beneficiaries. However, both functions lack event emissions, which is a significant oversight. Events in smart contracts are essential for tracking changes on the blockchain, especially for key administrative actions"
+  },
+  {
+    "title": "Redundant Memory Allocation",
+    "audit": "ForeProtocol",
+    "reported_impact": "Medium",
+    "reported_likelihood": "High",
+    "cwe_classification": 0,
+    "vulnerability_class": "Gas Usage",
+    "vulnerability_subclass": "Redundant Memory Allocation",
+    "vulnerable_functions": ["MarketLib.sol::_predict()"],
+    "lines": "",
+    "description": "The line MarketLib.Market memory m = market; creates an in-memory copy of the storage variable market. Given the size of the struct (multiple variables), this can lead to a significant Gas overhead. Only one attribute of m (endPredictionTimestamp) is accessed afterward. It is wasteful to create an entire in-memory copy of the market for this purpose. It will lead to increased Gas cost for every invocation of the function, making predictions more expensive for users."
+  },
+  {
+    "title": "Absence of ReentrancyGuard for ERC721 Functions",
+    "audit": "ForeProtocol",
+    "reported_impact": "Medium",
+    "reported_likelihood": "High",
+    "cwe_classification": 280,
+    "vulnerability_class": "Reentrancy",
+    "vulnerability_subclass": "Missing Mitigations",
+    "vulnerable_functions": ["BasicMarket.sol::"],
+    "lines": "",
+    "description": "The project's contracts do not utilize the ReentrancyGuard for functions that interact with ERC721 tokens. Although the project adheres to the Checks-Effects-Interactions (CEI) pattern, which can help prevent reentrancy attacks, it remains best practice to implement ReentrancyGuard as an additional security layer. Without the explicit use of ReentrancyGuard, functions are potentially more exposed to reentrancy attacks even if the CEI pattern is followed. Not using the ReentrancyGuard is a deviation from accepted smart contract development best practices."
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "LitLab",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Input",
+    "vulnerable_functions": [
+      "CyberTitansTournament.sol::joinTournament(),startTournament(), finalizeTournament()"
+    ],
+    "lines": "137-150, 164-174, 178-201",
+    "description": "The functions joinTournament(), startTournament(), and finalizeTournament() take an id value as an argument, which is used to interact with an array of created tournaments stored in the CyberTitansTournament contract. The value passed as id is not validated. This issue leads to the possibility of interacting with non-existent tournaments."
+  },
+  {
+    "title": "Insufficient Balance",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Incorrect Calculation",
+    "vulnerable_functions": ["CyberTitansGame.sol::finalizeGame()"],
+    "lines": "128-142",
+    "description": "In the CyberTitansGame contract, the finalizeGame() function first sends rewards to the winners, then takes fees and burns some amount of tokens. The function does not validate the sum of these operations; it can be greater than the number of tokens allocated for the game, as there is no limit on the values used for computation: winners[], fee, and rake. This can lead to an insufficient balance in the smart contract."
+  },
+  {
+    "title": "Invalid Calculations",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Mathematical Error",
+    "vulnerable_functions": ["LitlabPreStakingBox.sol::_getData()"],
+    "lines": "183-196",
+    "description": "In the _getData() function, rewardsTokensPerSec is calculated. To do so, there are two divisions by 10**18 which are unnecessary, as they cancel each other out mathematically. However, the way that calculation is set right now, leads to two errors: First, Solidity language does not have floating point numbers and thus the result of the calculation will not be accurate, leaving some residual leftover tokens. Second, the if (totalStakedAmount > 0) check is incorrect, as for 0 < totalStakedAmount < 1e18 range there will be a case of the division by 0, which will result in Denial of Service violation."
+  },
+  {
+    "title": "Non-Finalized Code",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 1121,
+    "vulnerability_class": "Software Quality",
+    "vulnerability_subclass": "Incomplete Code",
+    "vulnerable_functions": [
+      "CyberTitansTournament.sol::retireFromTournament(),event onRetiredTournament() "
+    ],
+    "lines": "156-159 / 49",
+    "description": "The function retireFromTournament() and the Event onRetiredTournament are present in the code as a draft, suggesting there will be an upgrade of the provided contracts. This means that the code is not finalized and additional changes will be introduced in the future, which cannot be validated."
+  },
+  {
+    "title": "Non-Finalized Code",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Non finalized code",
+    "vulnerable_functions": ["LITTAdvisorsTeam.sol::teamWithdraw()"],
+    "lines": "106-129",
+    "description": "The smart contract LITTAdvisorsTeam.sol uses truffle/console.sol and console.log() functions inside. This means that the code is submitted in a non-final version."
+  },
+  {
+    "title": "Inefficient Gas Model: Uncontrolled Loop of Storage Interactions",
+    "audit": "LitLab",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Gas Usage",
+    "vulnerability_subclass": "Storage Interaction",
+    "vulnerable_functions": ["CyberTitansTournament.sol::changeArray()"],
+    "lines": "106-111",
+    "description": "The function changeArrays() performs loops of uncontrolled iterations. Since those loops interact with storage variables, the block gas limit can be reached and the function may fail. Additionally, this design is not efficient in terms of Gas expense, since different storage variables must be accessed every time, even if only one of them has to be set."
+  },
+  {
+    "title": "Inefficient Gas Model: Uncontrolled Loop of Storage Interactions",
+    "audit": "LitLab",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Gas Optimization",
+    "vulnerability_subclass": "Storage Interaction",
+    "vulnerable_functions": [
+      "CyberTitansGame.sol: createGame(), finalizeGame()",
+      "CyberTitansTournament.sol::finalizeTournament()",
+      "LitlabPreStakingBox.sol::stake()  "
+    ],
+    "lines": "",
+    "description": "The following functions perform highly expensive storage operations inside a loop, which can reach the block Gas limit"
+  },
+  {
+    "title": "Inefficient Gas Model: Storage Abuse",
+    "audit": "LitLab",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Gas Optimization",
+    "vulnerability_subclass": "Storage Access",
+    "vulnerable_functions": [
+      "CyberTitansTournament.sol :: finalizeTournament()"
+    ],
+    "lines": "177-224",
+    "description": "In the finalizeTournament() function, the state variables tournament.tournamentAssuredAmount and tournament.token are accessed multiple times, consuming Gas unnecessarily."
+  },
+  {
+    "title": "Inefficient Gas Model: Storage Abuse",
+    "audit": "LitLab",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Gas Optimization",
+    "vulnerability_subclass": "Storage Access",
+    "vulnerable_functions": ["CyberTitansGame.sol:: finalizeGame()"],
+    "lines": "128-148",
+    "description": "In the finalizeGame() function, the state variables game.token and game.totalBet are accessed multiple times, consuming Gas unnecessarily."
+  },
+  {
+    "title": "Inefficient Gas Model: Storage Abuse",
+    "audit": "LitLab",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Gas Optimization",
+    "vulnerability_subclass": "Storage Access",
+    "vulnerable_functions": ["LITTVestingContract.sol :: _executeVesting()"],
+    "lines": "151-171",
+    "description": "In the _executeVesting() function, the state variable data._amount is accessed multiple times, consuming Gas unnecessarily."
+  },
+  {
+    "title": "Inefficient Gas Model: Cache Length",
+    "audit": "LitLab",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Gas Optimization",
+    "vulnerability_subclass": "Loop Optimization",
+    "vulnerable_functions": ["LITTAdvisorsTeam.sol :: approveTeamWithdraw()"],
+    "lines": "94-103",
+    "description": "In the approveTeamWithdraw() function, a for loop iterates through approvalWallets.length. The storage variable approvalWallets will be thus read at every iteration, consuming Gas unnecessarily."
+  },
+  {
+    "title": "Inefficient Gas Model: Cache Length",
+    "audit": "LitLab",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Gas Optimization",
+    "vulnerability_subclass": "Loop Optimization",
+    "vulnerable_functions": ["LITTAdvisorsTeam.sol :: teamWithdraw()"],
+    "lines": "106-129",
+    "description": "In the teamWithdraw() function, a for loop iterates through approvalWallets.length. The storage variable approvalWallets will be thus read at every iteration, consuming Gas unnecessarily."
+  },
+  {
+    "title": "Inefficient Gas Model: Non-specific View Function",
+    "audit": "LitLab",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Gas Optimization",
+    "vulnerability_subclass": "View Function Optimization",
+    "vulnerable_functions": [
+      "LitlabPreStakingBox.sol :: _getData(), withdrawRewards()"
+    ],
+    "lines": "",
+    "description": "In the withdrawRewards() function, there is a call to the view function _getData() in order to get pendingRewards. Said function computes a lot of variables, but only one of them is used. Although it is a view function, it will spend Gas when called by a non-view function."
+  },
+  {
+    "title": "Floating Pragma",
+    "audit": "Neptune",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Unlocked pragma version",
+    "vulnerable_functions": ["gauge-pool::"],
+    "lines": "",
+    "description": "The project uses floating pragmas ^0.8.0. This may result in the contracts being deployed using the wrong pragma version, which is different from the one they were tested with. For example, they might be deployed using an outdated pragma version which may include bugs that affect the system negatively"
+  },
+  {
+    "title": "Missing Zero Address Validation",
+    "audit": "Manilla",
+    "reported_impact": "low",
+    "reported_likelihood": "medium",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validations and error handling",
+    "vulnerability_subclass": "Missing Zero Address Validation",
+    "vulnerable_functions": ["Manilla::transferOwnership"],
+    "lines": "",
+    "description": "Address parameters are being used without checking against the possibility of 0x0. This can lead to unwanted external calls to 0x0"
+  },
+  {
+    "title": "Missing Storage Gaps",
+    "audit": "Neptune",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 1283,
+    "vulnerability_class": "Upgradability",
+    "vulnerability_subclass": "Storage Extension",
+    "vulnerable_functions": [
+      "LiquidityGaugePoolController.sol - LiquidityGaugePoolState.sol - LiquidityGaugePoolReward.sol - TokenRecovery.sol - WithPausability.sol "
+    ],
+    "lines": "",
+    "description": "When working with upgradeable contracts, it is necessary to introduce storage gaps to allow for storage extension during upgrades. Storage gaps are a convention for reserving storage slots in a base contract, allowing future versions of that contract to use up those slots without affecting the storage layout of child contracts."
+  },
+  {
+    "title": "CEI Pattern Violation",
+    "audit": "Neptune",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 703,
+    "vulnerability_class": "Design Flaw",
+    "vulnerability_subclass": "Best Practices Violation",
+    "vulnerable_functions": ["LiquidityGaugePool.sol:: deposit()"],
+    "lines": "",
+    "description": "In the deposit function, a CEI pattern violation has been detected, although it doesn't immediately present a reentrancy risk. The amount to be deposited is taken after the corresponding state(variables/mappings) is updated. To resolve this issue, it is advisable to refactor the affected code to conform to the CEI pattern, thereby enhancing code readability and alignment with recognized coding standards."
+  },
+  {
+    "title": "Incorrect Calculation of maxESE Due to Bitwise XOR Operator",
+    "audit": "Eesee",
+    "reported_impact": "Medium",
+    "reported_likelihood": "High",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Incorrect Calculation",
+    "vulnerable_functions": ["Eesee::_createLot()"],
+    "lines": "484-587",
+    "description": "the caret symbol (^) is mistakenly used instead of the double asterisk (**) which is the correct operator for exponentiation in Solidity. The caret symbol in Solidity is a bitwise XOR operator, not an exponentiation operator."
+  },
+  {
+    "title": "Incorrect Mathematical Operation",
+    "audit": "Venus Protocol",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Incorrect Calculation",
+    "vulnerable_functions": [
+      "PegStability.sol::previewTokenUSDAmount(), getPriceInUSD()"
+    ],
+    "lines": "208-228",
+    "description": "It is assumed that in all cases the decimals for USDC and USDT are 18, but depending on the network this may not always be the case. Therefore, when calculating to estimate the swap, an incorrect value can be produced."
+  },
+  {
+    "title": "Check-Effect-Interaction",
+    "audit": "Venus Protocol",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 367,
+    "vulnerability_class": "Reentrancy",
+    "vulnerability_subclass": "Time-of-check Time-of-use (TOCTOU) Race Condition",
+    "vulnerable_functions": [
+      "PegStability.sol::swapVAIForStable(), swapStableForVAI()"
+    ],
+    "lines": "163, 189",
+    "description": "Reentrancy error: The static variable vaiMinted is modified after executing the transfer, which means the balance can be refilled before the transfer is completed, potentially allowing it to be re-executed."
+  },
+  {
+    "title": "Denial of Service",
+    "audit": "Warped Games",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 400,
+    "vulnerability_class": "Denial Service",
+    "vulnerability_subclass": "Resource Exhaustion",
+    "vulnerable_functions": ["WarpedTaxHandler.sol::removeNFTs()"],
+    "lines": "154-165",
+    "description": "Deletes an element from an array, but forgets to delete the place it occupies."
+  },
+  {
+    "title": "Front Running",
+    "audit": "Warped Games",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 0,
+    "vulnerability_class": "MEV",
+    "vulnerability_subclass": "Front Running",
+    "vulnerable_functions": [
+      "WarpedTreasuryHandler.sol::addLiquidity() - _addLiquidity() - _swapTokensForEth()"
+    ],
+    "lines": "",
+    "description": "Amount values are set to 0 when interacting with Uniswap. This allows attackers to conduct frontal attacks and operations can generate unexpected amounts of tokens."
+  },
+  {
+    "title": "Denial Of Service",
+    "audit": "Warped Games",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 400,
+    "vulnerability_class": "Denial Service",
+    "vulnerability_subclass": "Resource Exhaustion",
+    "vulnerable_functions": ["WarpedTokenManager.sol:: _getTaxBasisPoints()"],
+    "lines": "",
+    "description": "tour all NFTs and tax rates. In case the arrays are large enough to exceed the gas limit of the block, the execution may fail."
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "Warped Games",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Uniqueness Check Missing",
+    "vulnerable_functions": ["WarpedTaxHandler.sol:: addNFTs()"],
+    "lines": "142-148",
+    "description": "The NFTs are not being checked for the uniqueness when they are added. This may result in duplicates and inconsistent contract state."
+  },
+  {
+    "title": "Unchecked Transfer",
+    "audit": "Warped Games",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Unchecked Return Value",
+    "vulnerable_functions": ["WarpedTreasuryHandler.sol:: withdraw()"],
+    "lines": "",
+    "description": "The function withdraw() does not use SafeERC20 library for checking the result of ERC20 token transfer."
+  },
+  {
+    "title": "Non-Finalized Code",
+    "audit": "Virtuswap",
+    "reported_impact": "medium",
+    "reported_likelihood": "medium",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Non-Finalized Code",
+    "vulnerable_functions": ["vStakerFactory::createPoolStaker()"],
+    "lines": "59",
+    "description": "The code should not contain TODO comments. Otherwise, it means that the code is not finalized and additional changes will be introduced in the future.",
+    "slither_output": [
+      "Parameter vStakerFactory.createPoolStaker(address)._lpToken (contracts/vStakerFactory.sol#57) is not in mixedCase"
+    ],
+    "slither_detect": 0
+  },
+  {
+    "title": "Floating Pragma",
+    "audit": "Virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Unlocked pragma version",
+    "vulnerable_functions": [""],
+    "lines": "",
+    "description": "Locking the pragma helps ensure that contracts do not accidentally get deployed using, for example, an outdated compiler version that might introduce bugs that affect the contract system negatively.",
+    "slither_output": [],
+    "slither_detect": 0
+  },
+  {
+    "title": "Unscalable Functionality - Same Checks In Functions",
+    "audit": "Virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "medium",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Repeated code",
+    "vulnerable_functions": ["vStaker::"],
+    "lines": "",
+    "description": "It is considered that smart contract systems should be easily scalable. Same checks used in several functions overwhelm code and make further development difficult",
+    "slither_output": [],
+    "slither_detect": 0
+  },
+  {
+    "title": "Missing Zero Address Validation",
+    "audit": "Virtuswap",
+    "reported_impact": "medium",
+    "reported_likelihood": "low",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validations and error handling",
+    "vulnerability_subclass": "Missing Zero Address Validation",
+    "vulnerable_functions": [
+      "vStakerFactory::constructor()",
+      "vStaker::unlockVrsw()",
+      "vChainMinter::constructor()",
+      "vChainMinter::setStakerFactory()",
+      "vChainMinter::transferRewards()",
+      "vChainMinter::mintGVrsw()",
+      "vChainMinter::burnGVrsw()",
+      "GVrsw::mint()"
+    ],
+    "lines": "",
+    "description": "Address parameters are being used without checking against the possibility of 0x0.\\n\\nThis can lead to unwanted external calls to 0x0.",
+    "slither_output": [
+      "vStakerFactory.constructor(address,address,address)._tokenomicsParams (contracts/vStakerFactory.sol#29) lacks a zero-check on : - tokenomicsParams = _tokenomicsParams (contracts/vStakerFactory.sol#34)",
+      "vStaker.constructor(address,address,address,address)._tokenomicsParams (contracts/vStaker.sol#76) lacks a zero-check on : - tokenomicsParams = _tokenomicsParams (contracts/vStaker.sol#81)",
+      "vChainMinter.constructor(uint256,address,address,address)._tokenomicsParams (contracts/vChainMinter.sol#59) lacks a zero-check on : - tokenomicsParams = _tokenomicsParams (contracts/vChainMinter.sol#63)",
+      "vChainMinter.setStakerFactory(address)._newStakerFactory (contracts/vChainMinter.sol#92) lacks a zero-check on : - stakerFactory = _newStakerFactory (contracts/vChainMinter.sol#94)",
+      "Parameter vChainMinter.setStakerFactory(address)._newStakerFactory (contracts/vChainMinter.sol#92) is not in mixedCase",
+      "Reentrancy in vChainMinter.transferRewards(address,uint256) (contracts/vChainMinter.sol#158-186): External calls: - SafeERC20.safeTransfer(IERC20(vrsw),to,amount) (contracts/vChainMinter.sol#184) Event emitted after the call(s): - TransferRewards(to,amount) (contracts/vChainMinter.sol#185)",
+      "vChainMinter.transferRewards(address,uint256) (contracts/vChainMinter.sol#158-186) uses timestamp for comparisons Dangerous comparisons: - require(bool,string)(block.timestamp >= emissionStartTs,too early) (contracts/vChainMinter.sol#159) - block.timestamp >= startEpochTime + epochDuration (contracts/vChainMinter.sol#167)",
+      "Reentrancy in vStaker.lockVrsw(uint256,uint256) (contracts/vStaker.sol#194-216): External calls: - SafeERC20.safeTransferFrom(IERC20(vrswToken),msg.sender,address(this),amount) (contracts/vStaker.sol#208-213) - IvChainMinter(minter).mintGVrsw(msg.sender,amount) (contracts/vStaker.sol#214) Event emitted after the call(s): - LockVrsw(msg.sender,amount,lockDuration) (contracts/vStaker.sol#215)",
+      "vChainMinter.burnGVrsw(address,uint256) (contracts/vChainMinter.sol#201-210) uses arbitrary from in transferFrom: SafeERC20.safeTransferFrom(IERC20(gVrsw),to,address(this),amount) (contracts/vChainMinter.sol#209)",
+      "Reentrancy in vStaker.unstakeVrsw(uint256) (contracts/vStaker.sol#174-191): External calls: - SafeERC20.safeTransfer(IERC20(vrswToken),msg.sender,amount) (contracts/vStaker.sol#187) - IvChainMinter(minter).burnGVrsw(msg.sender,amount) (contracts/vStaker.sol#188) Event emitted after the call(s): - UnstakeVrsw(msg.sender,amount) (contracts/vStaker.sol#190)",
+      ""
+    ],
+    "slither_detect": 0.5
+  },
+  {
+    "title": "Best Practice Violation",
+    "audit": "Virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "medium",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Arrays lengths unchecked",
+    "vulnerable_functions": ["vChainMinter::setAllocationPoints()"],
+    "lines": "",
+    "description": "The input arrays are not validated for having equal lengths. This violates the best practices.",
+    "slither_output": [
+      "Parameter vChainMinter.setAllocationPoints(address[],uint256[])._stakers (contracts/vChainMinter.sol#119) is not in mixedCase",
+      "Parameter vChainMinter.setAllocationPoints(address[],uint256[])._allocationPoints (contracts/vChainMinter.sol#120) is not in mixedCase",
+      "vChainMinter.setAllocationPoints(address[],uint256[]) (contracts/vChainMinter.sol#118-155) uses timestamp for comparisons Dangerous comparisons: - block.timestamp >= startEpochTime + epochDuration (contracts/vChainMinter.sol#122)",
+      "vChainMinter.setAllocationPoints(address[],uint256[]) (contracts/vChainMinter.sol#118-155) has external calls inside a loop: require(bool,string)(IvStakerFactory(_stakerFactory).getPoolStaker(IvStaker(_stakers[i]).lpToken()) == _stakers[i],invalid staker) (contracts/vChainMinter.sol#130-135)"
+    ],
+    "slither_detect": 0
+  },
+  {
+    "title": "State Variables Can Be Declared Immutable",
+    "audit": "Virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Gas usage",
+    "vulnerable_functions": ["vGlobalMinter::gVrsw()", "vGlobalMinter::vrsw()"],
+    "lines": "22,23",
+    "description": "Variables gVrsw and vrsw values are only set in the constructor. Those variables can be declared as immutable. This will lower Gas usage.",
+    "slither_output": [],
+    "slither_detect": 0
+  },
+  {
+    "title": "Unauthorized Access",
+    "audit": "Virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access control",
+    "vulnerability_subclass": "Authorization",
+    "vulnerable_functions": ["vVestingWallet::release()"],
+    "lines": "81",
+    "description": "The release() function can be called by anyone, allowing external users to release tokens on behalf of the beneficiary.",
+    "slither_output": [],
+    "slither_detect": 0
+  },
+  {
+    "title": "Missing Events",
+    "audit": "Virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 778,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Missing events",
+    "vulnerable_functions": ["vTokenomicsParams::constructor()"],
+    "lines": "",
+    "description": "Events for critical state changes should be emitted for tracking things off-chain. Missing event inside constructor() of vTokenomicsParams, tokenomics parameters are updated and UpdateTokenomicsParams should be emitted like in updateParams().",
+    "slither_output": [],
+    "slither_detect": 0
+  },
+  {
+    "title": "NatSpec Comment Contradiction",
+    "audit": "Virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "N/A",
+    "vulnerability_subclass": "?",
+    "vulnerable_functions": ["vChainMinter::transferRewards()"],
+    "lines": "160",
+    "description": "It is considered that the project should be consistent and contain no self-contradictions. The NatSpec comments of the transferRewards() imply that the caller must be a registered staker with a non-zero allocation point. Actually, staker can have a non-zero allocation point, in case he had rewards before. This may lead to wrong assumptions about the code's purpose.",
+    "slither_output": [
+      "vChainMinter.transferRewards(address,uint256) (contracts/vChainMinter.sol#158-186) uses timestamp for comparisons Dangerous comparisons: - require(bool,string)(block.timestamp >= emissionStartTs,too early) (contracts/vChainMinter.sol#159) - block.timestamp >= startEpochTime + epochDuration (contracts/vChainMinter.sol#167)",
+      "Reentrancy in vChainMinter.transferRewards(address,uint256) (contracts/vChainMinter.sol#158-186): External calls: - SafeERC20.safeTransfer(IERC20(vrsw),to,amount) (contracts/vChainMinter.sol#184) Event emitted after the call(s): - TransferRewards(to,amount) (contracts/vChainMinter.sol#185)"
+    ],
+    "slither_detect": 0
+  },
+  {
+    "title": "Denial of Service Vulnerability",
+    "audit": "sha2",
+    "reported_impact": "high",
+    "reported_likelihood": "high",
+    "cwe_classification": 190,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Overflow",
+    "vulnerable_functions": [
+      "Funnel::allowance()",
+      "Funnel::_remainingAllowance()",
+      "Funnel::transferFrom()"
+    ],
+    "lines": "222-223",
+    "description": "The internal function _remainingAllowance() will revert with overflow in situations where the approveRenewable() or permitRenewable() functions are used to approve a max uint256 value with a recoveryRate > 0. The overflow can occur with different edge cases: ddapproveRenewable(, type(uint256).max - type(uint192).max + 1, type(uint192).max); approveRenewable(, type(uint256).max - type(uint64).max + 1, type(uint64).max) The _remainingAllowance() function is used by allowance() and transferFrom(). These functions will be unusable after such approval."
+  },
+  {
+    "title": "Inefficient Gas Model",
+    "audit": "sha2",
+    "reported_impact": "medium",
+    "reported_likelihood": "medium",
+    "cwe_classification": 409,
+    "vulnerability_class": "Gas usage",
+    "vulnerability_subclass": "",
+    "vulnerable_functions": ["Funnel::"],
+    "lines": "",
+    "description": "The Funnel smart contract imports and uses the ERC20 contract directly for the _baseToken storage variable. It is best practice to use interfaces when interacting with external contracts. Importing and using an ERC20 smart contract directly may lead to higher deployment Gas expenses when deploying new funnels."
+  },
+  {
+    "title": "Inefficient Gas Model",
+    "audit": "sha2",
+    "reported_impact": "medium",
+    "reported_likelihood": "medium",
+    "cwe_classification": 409,
+    "vulnerability_class": "Gas usage",
+    "vulnerability_subclass": "",
+    "vulnerable_functions": ["FunnelFactory::"],
+    "lines": "",
+    "description": "The FunnelFactory smart contract imports the Funnel contract directly to use it in the initialization process. It is best practice to use interfaces when interacting with external contracts. Importing contracts directly increases the bytecode size of the deployed smart contract."
+  },
+  {
+    "title": "Unchecked Transfer",
+    "audit": "sha2",
+    "reported_impact": "medium",
+    "reported_likelihood": "medium",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Error handling",
+    "vulnerable_functions": ["Funnel::transfer()"],
+    "lines": "401",
+    "description": "An unchecked transferFrom() function is used in the transfer() function. Tokens that do not follow the ERC20 standard (such as USDT) may return false in the case of a transfer failure, or they may not return any value at all. This may lead to denial of service vulnerabilities when interacting with non-standard ERC20 tokens."
+  },
+  {
+    "title": "Violated Checks-Effects-Interactions Pattern",
+    "audit": "sha2",
+    "reported_impact": "medium",
+    "reported_likelihood": "medium",
+    "cwe_classification": 691,
+    "vulnerability_class": "Reentrancy",
+    "vulnerability_subclass": "",
+    "vulnerable_functions": ["FunnelFactory::deployFunnelForToken()"],
+    "lines": "36-38",
+    "description": "During the function execution, some state variables are updated after the external calls. This may lead to reentrancies, race conditions, and denial of service vulnerabilities during implementation of new functionality."
+  },
+  {
+    "title": "Floating Pragma",
+    "audit": "sha2",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Unlocked pragma version",
+    "vulnerable_functions": [""],
+    "lines": "",
+    "description": "Locking the pragma helps to ensure that contracts are not accidentally deployed using an outdated compiler version that might introduce bugs that affect the contract system negatively."
+  },
+  {
+    "title": "Redundant Imports",
+    "audit": "sha2",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Gas Usage",
+    "vulnerable_functions": ["Funnel::", "FunnelFactory::", "IFunnel::"],
+    "lines": "",
+    "description": "The use of unnecessary imports will increase the Gas consumption of the code. Thus, they should be removed from the code"
+  },
+  {
+    "title": "State Variables that Could Be Declared as Constant",
+    "audit": "sha2",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Gas Usage",
+    "vulnerable_functions": ["Funnel::"],
+    "lines": "50, 55",
+    "description": "There are variables in the contract that can be declared as constants to save Gas."
+  },
+  {
+    "title": "Missing Zero Address Validation",
+    "audit": "sha2",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Zero Address Validation",
+    "vulnerable_functions": [
+      "Funnel::initialize",
+      "FunnelFactory::constructor",
+      "FunnelFactory::deployFunnelForToken"
+    ],
+    "lines": "60, 26",
+    "description": "Address parameters are used without checking against the possibility of being 0x0. This can lead to unwanted external calls to 0x0"
+  },
+  {
+    "title": "Functions that Can Be Declared External",
+    "audit": "sha2",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "",
+    "vulnerable_functions": [
+      "Funnel::initialize",
+      "Funnel::permit",
+      "Funnel::permitRenewable",
+      "Funnel::approve",
+      "Funnel::approveRenewable",
+      "Funnel::allowance",
+      "Funnel::renewableAllowance",
+      "Funnel::supportsInterface",
+      "FunnelFactory::deployFunnelForToken",
+      "FunnelFactory::ifFunnel"
+    ],
+    "lines": "",
+    "description": "In order to save Gas, public functions that are never called in the contract should be declared as external."
+  },
+  {
+    "title": "Flashloan Attack, Front Running Attack",
+    "audit": "DeXe",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 362,
+    "vulnerability_class": "MEV",
+    "vulnerability_subclass": "Front Running",
+    "vulnerable_functions": [
+      "UniswapV2PathFinder::getUniV2PathWithPriceOut()",
+      "UniswapV2PathFinder::getUniV2PathWithPriceIn()"
+    ],
+    "lines": "13-20, 32-49",
+    "description": "The library uses Uniswaps getAmountsOut and getAmountsIn functions to determine the exchange rate for the assets. Those functions provide the price based on the current state of a liquidity pool that may be easily manipulated by flasholans."
+  },
+  {
+    "title": "Denial of Service Vulnerability",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 400,
+    "vulnerability_class": "Denial of Service",
+    "vulnerability_subclass": "Uncontrolled Resource Consumption",
+    "vulnerable_functions": ["GovValidators::duration"],
+    "lines": "51, 59, 64, 77, 96, 117, 124, 182, 186",
+    "description": "The voting duration should be greater than a minimal value. This may lead to not reaching a quorum as the proposal quickly comes to a Defeated state."
+  },
+  {
+    "title": "Integer Overflow",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 190,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Integer Overflow",
+    "vulnerable_functions": ["GovUserKeeper::_setERC721Address()"],
+    "lines": "643-667",
+    "description": "The function _setERC721Address has the require(nftsTotalSupply > 0) check implemented. However, due to downcasting of nftsTotalSupply to uint128, this condition could be bypassed."
+  },
+  {
+    "title": "Denial of Service Vulnerability",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 190,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Integer Overflow",
+    "vulnerable_functions": [
+      "GovValidators::createExternalProposal()",
+      "GovValidators::createInternalProposal()",
+      "GovPoolCreate::createProposal()"
+    ],
+    "lines": "70-113, 115-130, 30-78",
+    "description": "In case of setting voting duration close to the uint64 max value, voteEnd voting field may be overflowed and newly created votings can come to a Defeated state."
+  },
+  {
+    "title": "Denial of Service Vulnerability",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 190,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Integer Overflow",
+    "vulnerable_functions": ["GovValidators::createInternalProposal()"],
+    "lines": "70-113",
+    "description": "Each new proposal creates a new structure with snapshotId as its unique identifier. snapshotId is capped by a uint32 type, which has a max value of 4294967295. The potential attacker may max out this value in the event of a potential gas price drop."
+  },
+  {
+    "title": "Upgradeability Issues",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 1006,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Upgradeability",
+    "vulnerable_functions": ["TraderPool::*", "TraderPoolProposal::*"],
+    "lines": "",
+    "description": "The contracts do not follow the upgradability best practices by not adding a gap in the contract storage."
+  },
+  {
+    "title": "Best Practice Violation - CEI Pattern Violation",
+    "audit": "DeXe",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 696,
+    "vulnerability_class": "Reentrancy",
+    "vulnerability_subclass": "Incorrect Behavior Order",
+    "vulnerable_functions": [
+      "TraderPoolInvestProposal::create()",
+      "TraderPoolInvestProposal::invest()",
+      "TraderPoolRiskyProposal::create()",
+      "TraderPoolRiskyProposal::invest()",
+      "TraderPoolRiskyProposal::_investActivePortfolio()"
+    ],
+    "lines": "63-93, 95-122, 67-114, 116-175, 380-412",
+    "description": "The Checks-Effects-Interactions pattern is violated. In some functions, the state variables are modified after doing external calls"
+  },
+  {
+    "title": "Inconsistent Data - Unused Return Value",
+    "audit": "DeXe",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 252,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Unchecked Return Value",
+    "vulnerable_functions": [
+      "Insurance::buyInsurance()",
+      "Insurance::_payout()",
+      "Insurance::withdraw()"
+    ],
+    "lines": "54-58, 151-167, 70-87",
+    "description": "Multiple functions perform transfer calls on the _dexe token but ignore the return value."
+  },
+  {
+    "title": "Best Practice Violation - Unfinalized Functionality",
+    "audit": "DeXe",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 841,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Improper Enforcement of Behavioral Workflow",
+    "vulnerable_functions": ["GovValidators::createExternalProposal()"],
+    "lines": "115-130",
+    "description": "It is not possible to execute an external proposal even if a quorum is reached. This may lead to double execution of the proposal off-chain as the proposal state could not be updated."
+  },
+  {
+    "title": "Contradiction - Invalid Return Action",
+    "audit": "DeXe",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Improper Check or Handling of Exceptional Conditions",
+    "vulnerable_functions": ["PoolFactory::predictGovAddress()"],
+    "lines": "231",
+    "description": "The function contains the check (bytes(poolName).length == 0) which returns address(0). This might cause a logic error, because the relying code might not expect a zero address. Instead, an error should be thrown clearly marking that the input parameter is invalid."
+  },
+  {
+    "title": "Best Practice Violation - Unstable Import",
+    "audit": "DeXe",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 1104,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Use of Unmaintained Third Party Components",
+    "vulnerable_functions": [],
+    "lines": "",
+    "description": "The project allows different versions of a custom import @dlsl/dev-modules: ^1.8.1. This may lead to unexpected and untested code being deployed."
+  },
+  {
+    "title": "Floating Pragma",
+    "audit": "DeXe",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 1104,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Use of Unmaintained Third Party Components",
+    "vulnerable_functions": [],
+    "lines": "",
+    "description": "Locking the pragma helps ensure that contracts do not accidentally get deployed using an outdated compiler version"
+  },
+  {
+    "title": "Redundant Import",
+    "audit": "DeXe",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 1164,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Irrelevant Code",
+    "vulnerable_functions": [],
+    "lines": "",
+    "description": "Unused imports should be removed from the contracts."
+  },
+  {
+    "title": "Missing Events",
+    "audit": "DeXe",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 710,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Improper Adherence to Coding Standards",
+    "vulnerable_functions": [
+      "PriceFeed::addPathTokens()",
+      "PriceFeed::removePathTokens()",
+      "CoreProperties::*"
+    ],
+    "lines": "56-58, 60-62",
+    "description": "Events for critical state changes should be emitted for tracking things off-chain."
+  },
+  {
+    "title": "Unindexed Events",
+    "audit": "DeXe",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 710,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Improper Adherence to Coding Standards",
+    "vulnerable_functions": ["PoolFactory::*", "TraderPool::*"],
+    "lines": "",
+    "description": "Having indexed parameters in the events makes it easier to search for these events using indexed parameters as filters."
+  },
+  {
+    "title": "Function Which May Be Declared Private",
+    "audit": "DeXe",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 710,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Improper Adherence to Coding Standards",
+    "vulnerable_functions": ["PoolFactory::*"],
+    "lines": "",
+    "description": "There is no added value in declaring non-public functions as internal in a non-inherited contract."
+  },
+  {
+    "title": "Redundant Statement",
+    "audit": "DeXe",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 1164,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Irrelevant Code",
+    "vulnerable_functions": [
+      "GovValidatorsToken::mint()",
+      "GovValidatorsToken::burn()"
+    ],
+    "lines": "20, 24",
+    "description": "The onlyValidator check on the functions is redundant as the functions call _beforeTokenTransfer functions internally, which is under the modifier."
+  },
+  {
+    "title": "Missing Zero Address Validation",
+    "audit": "DeXe",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Zero Address Validation",
+    "vulnerable_functions": [
+      "GovPool::__GovPool_init()",
+      "GovSettings::__GovSettings_init()",
+      "BasicTraderPool::__BasicTraderPool_init()",
+      "InvestTraderPool:: __InvestTraderPool_init()"
+    ],
+    "lines": "104-132, 19-61, 30-47, 33-50",
+    "description": "Address parameters are used without checking against the possibility of 0x0."
+  },
+  {
+    "title": "Shadowing State Variables",
+    "audit": "DeXe",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 710,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Improper Adherence to Coding Standards",
+    "vulnerable_functions": [
+      "TraderPool::__TraderPool_init()",
+      "InvestTraderPool::__InvestTraderPool_init()",
+      "BasicTraderPool::__BasicTraderPool_init()",
+      "GovValidatorsToken::constructor()",
+      "ERC721Power::constructor()",
+      "ERC721Multiplier::constructor()"
+    ],
+    "lines": "89-98, 33-44, 30-41, 48-68, 46-67, 23",
+    "description": "State variables should not be shadowed in order to keep abstraction levels clear."
+  },
+
+  {
+    "title": "Upgradeability Issues",
+    "audit": "Dexalot",
+    "reported_impact": "medium",
+    "reported_likelihood": "high",
+    "cwe_classification": 1006,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "",
+    "vulnerable_functions": [],
+    "lines": "",
+    "description": "The contract is upgradable but does not follow the upgradability best practices by not adding a gap in the contract storage. This may lead to contract storage layout corruption during an upgrade. The contract inherits EIP712Upgradeable that contains a __gap variable, but it is a best practice to create a new __gap variable that will be more accessible due to variables order."
+  },
+  {
+    "title": "Missing Zero Address Validation",
+    "audit": "Dexalot",
+    "reported_impact": "low",
+    "reported_likelihood": "medium",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Zero Address Validation",
+    "vulnerable_functions": [
+      "MainnetRFQ::initialize()",
+      "MainnetRFQ::addAdmin()",
+      "MainnetRFQ::addTrustedContract()"
+    ],
+    "lines": "81-91, 181-184, 210-217",
+    "description": "Address parameters are being used without checking against the possibility of 0x0."
+  },
+
+  {
+    "title": "No Safe Transfer",
+    "audit": "SnackClub",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "improper check or handling of exceptional conditions",
+    "vulnerable_functions": [
+      "SnackclubTournamentsPayout::transfer",
+      "SnackclubTournamentsPayout::transferFrom"
+    ],
+    "lines": "25, 40, 45",
+    "description": "It is risky to use ERC20 transfer() and transferFrom() functions directly as some ERC20  tokens do not return a true value when invoked."
+  },
+  {
+    "title": "Solidity Version Pinning",
+    "audit": "SnackClub",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 1104,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Use of Unmaintained Third Party Components",
+    "vulnerable_functions": [],
+    "lines": "",
+    "description": "The pragma solidity statement used allows the contracts to be compiled with newer versions of the compiler. This may introduce unintended bugs when new compilers are released."
+  },
+  {
+    "title": "Possible Reentrancy Attack with Vulnerable ERC20",
+    "audit": "SnackClub",
+    "reported_impact": "Low",
+    "reported_likelihood": "Low",
+    "cwe_classification": 841,
+    "vulnerability_class": "Reentrancy",
+    "vulnerability_subclass": "Improper Enforcement of Behavioral Workflow",
+    "vulnerable_functions": ["SnackclubTournamentsPayout::constructor"],
+    "lines": "25-27",
+    "description": "If the ERC20 token of the reward allows the receiver or a third party to execute some code when a transfer is being made, a reentrancy attack can be made to claim the same reward multiple times."
+  }
+]

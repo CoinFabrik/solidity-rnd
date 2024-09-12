@@ -1,0 +1,517 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IEeseeDrops",
+  "sourceName": "contracts/interfaces/IEeseeDrops.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "CallerNotAuthorized",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FeeTooHigh",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidArrayLengths",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidConstructor",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidDropID",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidEarningsCollector",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidFee",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidFeeSplitter",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidQuantity",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidRecipient",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint96",
+          "name": "untrackedVolume",
+          "type": "uint96"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        }
+      ],
+      "name": "AddVolumeReverted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint96",
+          "name": "previousFee",
+          "type": "uint96"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint96",
+          "name": "newFee",
+          "type": "uint96"
+        }
+      ],
+      "name": "ChangeFee",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousFeeSplitter",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newFeeSplitter",
+          "type": "address"
+        }
+      ],
+      "name": "ChangeFeeSplitter",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint96",
+          "name": "amount",
+          "type": "uint96"
+        }
+      ],
+      "name": "CollectFee",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "ID",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "contract IERC721",
+          "name": "collection",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "earningsCollector",
+          "type": "address"
+        }
+      ],
+      "name": "ListDrop",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "ID",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "contract IERC721",
+          "name": "collection",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "fromTokenID",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "quantity",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint96",
+          "name": "mintPrice",
+          "type": "uint96"
+        }
+      ],
+      "name": "MintDrop",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "ADMIN_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "ESE",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "accessManager",
+      "outputs": [
+        {
+          "internalType": "contract IEeseeAccessManager",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint96",
+          "name": "_fee",
+          "type": "uint96"
+        }
+      ],
+      "name": "changeFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_feeSplitter",
+          "type": "address"
+        }
+      ],
+      "name": "changeFeeSplitter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "drops",
+      "outputs": [
+        {
+          "internalType": "uint96",
+          "name": "fee",
+          "type": "uint96"
+        },
+        {
+          "internalType": "contract IERC721",
+          "name": "collection",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "earningsCollector",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fee",
+      "outputs": [
+        {
+          "internalType": "uint96",
+          "name": "",
+          "type": "uint96"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeSplitter",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "ID",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMintPrices",
+      "outputs": [
+        {
+          "internalType": "uint96[]",
+          "name": "",
+          "type": "uint96[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "baseURI",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "revealedURI",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "contractURI",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "royaltyReceiver",
+              "type": "address"
+            },
+            {
+              "internalType": "uint96",
+              "name": "royaltyFeeNumerator",
+              "type": "uint96"
+            }
+          ],
+          "internalType": "struct DropMetadata",
+          "name": "metadata",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "duration",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "perAddressMintLimit",
+              "type": "uint32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "allowListMerkleRoot",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct IEeseeNFTDrop.StageOptions[]",
+          "name": "stages",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint96[]",
+          "name": "mintPrices",
+          "type": "uint96[]"
+        },
+        {
+          "internalType": "uint32",
+          "name": "mintLimit",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "mintStartTimestamp",
+          "type": "uint32"
+        },
+        {
+          "internalType": "address",
+          "name": "earningsCollector",
+          "type": "address"
+        },
+        {
+          "internalType": "uint96",
+          "name": "expectedFee",
+          "type": "uint96"
+        }
+      ],
+      "name": "listDrop",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "ID",
+          "type": "uint256"
+        },
+        {
+          "internalType": "contract IERC721",
+          "name": "collection",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "IDs",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint32[]",
+          "name": "quantities",
+          "type": "uint32[]"
+        },
+        {
+          "internalType": "bytes32[][]",
+          "name": "merkleProofs",
+          "type": "bytes32[][]"
+        },
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "permit",
+          "type": "bytes"
+        }
+      ],
+      "name": "mintDrops",
+      "outputs": [
+        {
+          "internalType": "uint96",
+          "name": "mintPrice",
+          "type": "uint96"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "minter",
+      "outputs": [
+        {
+          "internalType": "contract IEeseeMinter",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "staking",
+      "outputs": [
+        {
+          "internalType": "contract IEeseeStaking",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

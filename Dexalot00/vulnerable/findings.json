@@ -1,0 +1,67 @@
+{
+  "description": {
+    "project_name": "Dexalot",
+    "compiler_versions": ["0.8.17"]
+  },
+  "findings": [
+    {
+      "title": "Upgradeability Issues",
+      "reported_impact": "medium",
+      "reported_likelihood": "high",
+      "cwe_classification": 1006,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Upgradeability",
+      "vulnerable_functions": [],
+      "lines": "",
+      "description": "The contract is upgradable but does not follow the upgradability best practices by not adding a gap in the contract storage. This may lead to contract storage layout corruption during an upgrade. The contract inherits EIP712Upgradeable that contains a __gap variable, but it is a best practice to create a new __gap variable that will be more accessible due to variables order."
+    },
+    {
+      "title": "Unsafe Approval",
+      "reported_impact": "high",
+      "reported_likelihood": "high",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Unsafe Approval",
+      "vulnerable_functions": ["MainnetRFQ::_executeSwap()"],
+      "lines": "275, 283",
+      "description": "The contract MainnetRFQ uses the approve() function inside of the _executeSwap(), which does not update the allowance, but replaces it. This creates a problem when a taker, which is a smart-contract, makes several swaps, and does not withdraw the previous approval."
+    },
+    {
+      "title": "EIP Standard Violation: Missing Value Check",
+      "reported_impact": "high",
+      "reported_likelihood": "low",
+      "cwe_classification": 347,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Improper verification of signature",
+      "vulnerable_functions": ["MainnetRFQ::_recoverSigner()"],
+      "lines": "165-189",
+      "description": "According to the EIP-1271 implementation, the s value in the signature verification process should be checked against an upper value. The function _recoverSigner() does not implement an upper bound check for the variable s."
+    },
+    {
+      "title": "Missing Zero Address Validation",
+      "reported_impact": "low",
+      "reported_likelihood": "medium",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Zero Address Validation",
+      "vulnerable_functions": [
+        "MainnetRFQ::initialize()",
+        "MainnetRFQ::addAdmin()",
+        "MainnetRFQ::addTrustedContract()"
+      ],
+      "lines": "81-91, 181-184, 210-217",
+      "description": "Address parameters are being used without checking against the possibility of 0x0."
+    },
+    {
+      "title": "Missing Array Length Check",
+      "reported_impact": "low",
+      "reported_likelihood": "medium",
+      "cwe_classification": 129,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Improper Validation of array index",
+      "vulnerable_functions": ["MainnetRFQ::batchClaimBalance()"],
+      "lines": "279-296",
+      "description": "The function batchClaimBalance() lacks the array length equality checks, which will lead to unexpected behavior if the length of arrays is different."
+    }
+  ]
+}

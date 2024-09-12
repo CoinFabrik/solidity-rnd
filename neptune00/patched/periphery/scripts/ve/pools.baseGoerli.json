@@ -1,0 +1,62 @@
+[
+  {
+    "key": "0x7072696d65000000000000000000000000000000000000000000000000000000",
+    "name": "Prime dApps",
+    "infoDetails": {
+      "description": "dadezip suqav qi zituhas jeleh bizonul ray lami torenuh qoma nocad woj yexu boda qe kip zahusa no jariq gakevo nayiko konemi zok vahidi cale qebur yopeyep we nubatuq gokoy quqe wizewo fa jur toqibe semu pamake jadaci bapizuv curec tos gum qaronaz yoye feguzu fi pagi juzum resex paqaro xuf xenupiw dason lu yuxa."
+    },
+    "epochDuration": 2419200,
+    "veBoostRatio": 1000,
+    "platformFee": 500,
+    "stakingToken": "0x905af6612b71a27311e4f3a8ee478f8913ca82c8",
+    "veToken": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
+    "rewardToken": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
+    "registry": "0x16A6854fF59793731C33B5527A83d05b76f078E4",
+    "treasury": "0x5e4B7212Beb8926fc925328e890dBe6c6fC971f0"
+  },
+  {
+    "key": "0x706f700000000000000000000000000000000000000000000000000000000000",
+    "name": "Popular DeFi Apps",
+    "infoDetails": {
+      "description": "wopotab xic rej viwigi badod goto fenu lili bi hu lamo niv do ru yenu noqa helel vat xonewik vasuqa pebuwiv re mecu pof xamo woqit teqo miqor suxux jamolil cutagu mihezo carikig qe cuyok yuruwa mi yeyisu rafo nidew sa piy rememub yed no rumug qocuso sotuniw wetin peco sij xe devisi deyaha yebiwew kapihe hah da file yefo xogixi mutes fafizor fufic tojeqef."
+    },
+    "epochDuration": 2419200,
+    "veBoostRatio": 1000,
+    "platformFee": 500,
+    "stakingToken": "0x21db27f58bfefda0a61fcca0791ed259fbe26310",
+    "veToken": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
+    "rewardToken": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
+    "registry": "0x16A6854fF59793731C33B5527A83d05b76f078E4",
+    "treasury": "0x5e4B7212Beb8926fc925328e890dBe6c6fC971f0"
+  },
+  {
+    "key": "0x676d782d76310000000000000000000000000000000000000000000000000000",
+    "name": "GMX V1",
+    "infoDetails": {
+      "description": "vahadeb yuk xifoto ba zi jisa vuwoqa nax hujiw gu gulole vudaq heraz musore ga kiturob tudibit five qevigod mevef laquruj qogo gapizi reqikar viqe joniz xedide geric suk fehiy kadefu fay ciruwab col tusof jicik cidemiv yor fow veyij yaj moloj pe luj kutuxo hacugu wo gagu qina vidi tocu me bacetew vukeba pidevag nev mom xaram rusaq demopin."
+    },
+    "epochDuration": 2419200,
+    "veBoostRatio": 1000,
+    "platformFee": 500,
+    "stakingToken": "0xc6709d81f5abea48d0d593b015f7dbb191c00e39",
+    "veToken": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
+    "rewardToken": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
+    "registry": "0x16A6854fF59793731C33B5527A83d05b76f078E4",
+    "treasury": "0x5e4B7212Beb8926fc925328e890dBe6c6fC971f0"
+  },
+  {
+    "key": "0x72646e742d763100000000000000000000000000000000000000000000000000",
+    "name": "Radiant v2",
+    "infoDetails": {
+      "description": "su yirom po den fufey bav losepow mu pen xocokin kuzeye qi zecocek fe hi boweb vupad par got guzaz lasudu xo dog ta dupi bupak zira jixacu zer mo geye baquz tak yah yesi goq yiku depuq ki fig qorehuq huyixar pika kajoyi reba hasap famoxej su jaxedox jaz gekiso vifariq qepasa fo lesa pozinaf voyo kejitu wumezu yijeke."
+    },
+    "epochDuration": 2419200,
+    "veBoostRatio": 1000,
+    "platformFee": 500,
+    "stakingToken": "0x09c9d6b1a9e499a423120c03e584edc020aeda6d",
+    "veToken": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
+    "rewardToken": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
+    "registry": "0x16A6854fF59793731C33B5527A83d05b76f078E4",
+    "treasury": "0x5e4B7212Beb8926fc925328e890dBe6c6fC971f0"
+  }
+]

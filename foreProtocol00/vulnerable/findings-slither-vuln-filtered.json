@@ -1,0 +1,816 @@
+{
+    "description": {
+        "project_name": "Fore Protocol",
+        "compiler_versions": [
+            "0.8.7"
+        ]
+    },
+    "findings": [
+        {
+            "title": "Mishandled Edge Case; Data Consistency",
+            "reported_impact": "Critical",
+            "reported_likelihood": "High",
+            "cwe_classification": 0,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Missing Validation",
+            "vulnerable_functions": [
+                "MarketLib::_isVerified()"
+            ],
+            "lines": "75-77",
+            "description": "In the prediction market verification system, the market is considered `verified` if the verified amount of the major side is equal to the total amount of the minor side. This method can be easily manipulated, especially when there is a significant difference between the sides. It can lead to a loss of confidence in the fairness of the prediction market, economic misalignment, and the potential for manipulation."
+        },
+        {
+            "title": "Denial of Service Vulnerability",
+            "reported_impact": "Critical",
+            "reported_likelihood": "High",
+            "cwe_classification": 400,
+            "vulnerability_class": "Denial of Service",
+            "vulnerability_subclass": "Resource Exhaustion",
+            "vulnerable_functions": [
+                "BasicMarket::withdrawVerificationReward()"
+            ],
+            "lines": "305-366",
+            "description": "The withdrawVerificationReward function attempts to transfer tokens from its own address using the transferFrom method. Regular ERC20 implementations typically do not allow for this kind of transfer without prior approval calls, leading to potential denial-of-service (DoS) attacks as the function can be made to fail consistently.The addVestingSchedule and changeBeneficiaryAddress functions in the vesting contract are crucial for managing vesting schedules and beneficiaries. However, both functions lack event emissions, which is a significant oversight. Events in smart contracts are essential for tracking changes on the blockchain, especially for key administrative actions",
+            "possible_found_in": [
+                {
+                    "element": {
+                        "type": "function",
+                        "name": "withdrawVerificationReward",
+                        "source_mapping": {
+                            "start": 10034,
+                            "length": 2058,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                            "starting_column": 5,
+                            "ending_column": 6
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "contract",
+                                "name": "BasicMarket",
+                                "source_mapping": {
+                                    "start": 315,
+                                    "length": 12535,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                    "starting_column": 1,
+                                    "ending_column": 2
+                                }
+                            },
+                            "signature": "withdrawVerificationReward(uint256,bool)"
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) uses arbitrary from in transferFrom: foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard) (contracts/protocol/markets/basic/BasicMarket.sol#347-351)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) uses arbitrary from in transferFrom: [foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard)](contracts/protocol/markets/basic/BasicMarket.sol#L347-L351)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "617656ff0e59ec7d758159c3a852e9a1b53474f3654402d15193cc8594e3bc54",
+                        "check": "arbitrary-send-erc20",
+                        "impact": "High",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "function",
+                        "name": "withdrawVerificationReward",
+                        "source_mapping": {
+                            "start": 10034,
+                            "length": 2058,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                            "starting_column": 5,
+                            "ending_column": 6
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "contract",
+                                "name": "BasicMarket",
+                                "source_mapping": {
+                                    "start": 315,
+                                    "length": 12535,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                    "starting_column": 1,
+                                    "ending_column": 2
+                                }
+                            },
+                            "signature": "withdrawVerificationReward(uint256,bool)"
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) uses arbitrary from in transferFrom: foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator) (contracts/protocol/markets/basic/BasicMarket.sol#342-346)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) uses arbitrary from in transferFrom: [foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator)](contracts/protocol/markets/basic/BasicMarket.sol#L342-L346)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "c403e2db9ff37828128f9830c055cd7a14059f1fd24b214965af2b2880924a7f",
+                        "check": "arbitrary-send-erc20",
+                        "impact": "High",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "function",
+                        "name": "withdrawVerificationReward",
+                        "source_mapping": {
+                            "start": 10034,
+                            "length": 2058,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                            "starting_column": 5,
+                            "ending_column": 6
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "contract",
+                                "name": "BasicMarket",
+                                "source_mapping": {
+                                    "start": 315,
+                                    "length": 12535,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                    "starting_column": 1,
+                                    "ending_column": 2
+                                }
+                            },
+                            "signature": "withdrawVerificationReward(uint256,bool)"
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) ignores return value by foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator) (contracts/protocol/markets/basic/BasicMarket.sol#342-346)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) ignores return value by [foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator)](contracts/protocol/markets/basic/BasicMarket.sol#L342-L346)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "09f6176327e32fcf4f18954c41b8b590d264bb476320e41b316c12fd8ccf3f3f",
+                        "check": "unchecked-transfer",
+                        "impact": "High",
+                        "confidence": "Medium"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "function",
+                        "name": "withdrawVerificationReward",
+                        "source_mapping": {
+                            "start": 10034,
+                            "length": 2058,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                            "starting_column": 5,
+                            "ending_column": 6
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "contract",
+                                "name": "BasicMarket",
+                                "source_mapping": {
+                                    "start": 315,
+                                    "length": 12535,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                    "starting_column": 1,
+                                    "ending_column": 2
+                                }
+                            },
+                            "signature": "withdrawVerificationReward(uint256,bool)"
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) ignores return value by foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard) (contracts/protocol/markets/basic/BasicMarket.sol#347-351)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) ignores return value by [foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard)](contracts/protocol/markets/basic/BasicMarket.sol#L347-L351)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "2e902eba303f19a11602144cb4e3b05618f0d677a5da2616dc92f86f1202446a",
+                        "check": "unchecked-transfer",
+                        "impact": "High",
+                        "confidence": "Medium"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "function",
+                        "name": "withdrawVerificationReward",
+                        "source_mapping": {
+                            "start": 10034,
+                            "length": 2058,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                            "starting_column": 5,
+                            "ending_column": 6
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "contract",
+                                "name": "BasicMarket",
+                                "source_mapping": {
+                                    "start": 315,
+                                    "length": 12535,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                    "starting_column": 1,
+                                    "ending_column": 2
+                                }
+                            },
+                            "signature": "withdrawVerificationReward(uint256,bool)"
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) ignores return value by foreToken.transferFrom(address(this),address(foreVerifiers),toVerifier) (contracts/protocol/markets/basic/BasicMarket.sol#334-338)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) ignores return value by [foreToken.transferFrom(address(this),address(foreVerifiers),toVerifier)](contracts/protocol/markets/basic/BasicMarket.sol#L334-L338)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "cdbdaf039e9dfda66255781737d86f096bd8c40dbc2664518c2d1a365302d067",
+                        "check": "unchecked-transfer",
+                        "impact": "High",
+                        "confidence": "Medium"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "function",
+                        "name": "withdrawVerificationReward",
+                        "source_mapping": {
+                            "start": 10034,
+                            "length": 2058,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                            "starting_column": 5,
+                            "ending_column": 6
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "contract",
+                                "name": "BasicMarket",
+                                "source_mapping": {
+                                    "start": 315,
+                                    "length": 12535,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                    "starting_column": 1,
+                                    "ending_column": 2
+                                }
+                            },
+                            "signature": "withdrawVerificationReward(uint256,bool)"
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) ignores return value by foreToken.transferFrom(address(this),v.verifier,toVerifier) (contracts/protocol/markets/basic/BasicMarket.sol#325-329)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) ignores return value by [foreToken.transferFrom(address(this),v.verifier,toVerifier)](contracts/protocol/markets/basic/BasicMarket.sol#L325-L329)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "e0e4c0f182e7069f4eac04e67ddc7d8748e29b5998159f802e178aaad279dbaf",
+                        "check": "unchecked-transfer",
+                        "impact": "High",
+                        "confidence": "Medium"
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Unauthorized Access To Critical Functions",
+            "reported_impact": "Critical",
+            "reported_likelihood": "High",
+            "cwe_classification": 285,
+            "vulnerability_class": "Access Control",
+            "vulnerability_subclass": "Authorization",
+            "vulnerable_functions": [
+                "BasicMarket::withdrawVerificationReward()"
+            ],
+            "lines": "305-366",
+            "description": "The function lacks proper access controls, allowing any external party to dictate how verifier rewards are withdrawn. This design flaw can be exploited by a malicious actor to control the distribution of power between NFT verifiers, potentially gaining undue advantages in future markets.",
+            "possible_found_in": [
+                {
+                    "element": {
+                        "type": "node",
+                        "name": "foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard)",
+                        "source_mapping": {
+                            "start": 11541,
+                            "length": 149,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "347, 348, 349, 350, 351",
+                            "starting_column": 13,
+                            "ending_column": 14
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "withdrawVerificationReward",
+                                "source_mapping": {
+                                    "start": 10034,
+                                    "length": 2058,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "BasicMarket",
+                                        "source_mapping": {
+                                            "start": 315,
+                                            "length": 12535,
+                                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "is_dependency": false,
+                                            "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "withdrawVerificationReward(uint256,bool)"
+                                }
+                            }
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) uses arbitrary from in transferFrom: foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard) (contracts/protocol/markets/basic/BasicMarket.sol#347-351)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) uses arbitrary from in transferFrom: [foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard)](contracts/protocol/markets/basic/BasicMarket.sol#L347-L351)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "617656ff0e59ec7d758159c3a852e9a1b53474f3654402d15193cc8594e3bc54",
+                        "check": "arbitrary-send-erc20",
+                        "impact": "High",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "node",
+                        "name": "foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator)",
+                        "source_mapping": {
+                            "start": 11383,
+                            "length": 144,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "342, 343, 344, 345, 346",
+                            "starting_column": 13,
+                            "ending_column": 14
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "withdrawVerificationReward",
+                                "source_mapping": {
+                                    "start": 10034,
+                                    "length": 2058,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "BasicMarket",
+                                        "source_mapping": {
+                                            "start": 315,
+                                            "length": 12535,
+                                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "is_dependency": false,
+                                            "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "withdrawVerificationReward(uint256,bool)"
+                                }
+                            }
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) uses arbitrary from in transferFrom: foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator) (contracts/protocol/markets/basic/BasicMarket.sol#342-346)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) uses arbitrary from in transferFrom: [foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator)](contracts/protocol/markets/basic/BasicMarket.sol#L342-L346)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "c403e2db9ff37828128f9830c055cd7a14059f1fd24b214965af2b2880924a7f",
+                        "check": "arbitrary-send-erc20",
+                        "impact": "High",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "node",
+                        "name": "foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator)",
+                        "source_mapping": {
+                            "start": 11383,
+                            "length": 144,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "342, 343, 344, 345, 346",
+                            "starting_column": 13,
+                            "ending_column": 14
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "withdrawVerificationReward",
+                                "source_mapping": {
+                                    "start": 10034,
+                                    "length": 2058,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "BasicMarket",
+                                        "source_mapping": {
+                                            "start": 315,
+                                            "length": 12535,
+                                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "is_dependency": false,
+                                            "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "withdrawVerificationReward(uint256,bool)"
+                                }
+                            }
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) ignores return value by foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator) (contracts/protocol/markets/basic/BasicMarket.sol#342-346)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) ignores return value by [foreToken.transferFrom(address(foreVerifiers),m.disputeCreator,toDisputeCreator)](contracts/protocol/markets/basic/BasicMarket.sol#L342-L346)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "09f6176327e32fcf4f18954c41b8b590d264bb476320e41b316c12fd8ccf3f3f",
+                        "check": "unchecked-transfer",
+                        "impact": "High",
+                        "confidence": "Medium"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "node",
+                        "name": "foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard)",
+                        "source_mapping": {
+                            "start": 11541,
+                            "length": 149,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "347, 348, 349, 350, 351",
+                            "starting_column": 13,
+                            "ending_column": 14
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "withdrawVerificationReward",
+                                "source_mapping": {
+                                    "start": 10034,
+                                    "length": 2058,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "BasicMarket",
+                                        "source_mapping": {
+                                            "start": 315,
+                                            "length": 12535,
+                                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "is_dependency": false,
+                                            "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "withdrawVerificationReward(uint256,bool)"
+                                }
+                            }
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) ignores return value by foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard) (contracts/protocol/markets/basic/BasicMarket.sol#347-351)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) ignores return value by [foreToken.transferFrom(address(foreVerifiers),protocolConfig.highGuard(),toHighGuard)](contracts/protocol/markets/basic/BasicMarket.sol#L347-L351)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "2e902eba303f19a11602144cb4e3b05618f0d677a5da2616dc92f86f1202446a",
+                        "check": "unchecked-transfer",
+                        "impact": "High",
+                        "confidence": "Medium"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "node",
+                        "name": "foreToken.transferFrom(address(this),address(foreVerifiers),toVerifier)",
+                        "source_mapping": {
+                            "start": 11157,
+                            "length": 151,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "334, 335, 336, 337, 338",
+                            "starting_column": 17,
+                            "ending_column": 18
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "withdrawVerificationReward",
+                                "source_mapping": {
+                                    "start": 10034,
+                                    "length": 2058,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "BasicMarket",
+                                        "source_mapping": {
+                                            "start": 315,
+                                            "length": 12535,
+                                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "is_dependency": false,
+                                            "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "withdrawVerificationReward(uint256,bool)"
+                                }
+                            }
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) ignores return value by foreToken.transferFrom(address(this),address(foreVerifiers),toVerifier) (contracts/protocol/markets/basic/BasicMarket.sol#334-338)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) ignores return value by [foreToken.transferFrom(address(this),address(foreVerifiers),toVerifier)](contracts/protocol/markets/basic/BasicMarket.sol#L334-L338)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "cdbdaf039e9dfda66255781737d86f096bd8c40dbc2664518c2d1a365302d067",
+                        "check": "unchecked-transfer",
+                        "impact": "High",
+                        "confidence": "Medium"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "node",
+                        "name": "foreToken.transferFrom(address(this),v.verifier,toVerifier)",
+                        "source_mapping": {
+                            "start": 10833,
+                            "length": 139,
+                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                            "is_dependency": false,
+                            "lines": "325, 326, 327, 328, 329",
+                            "starting_column": 17,
+                            "ending_column": 18
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "withdrawVerificationReward",
+                                "source_mapping": {
+                                    "start": 10034,
+                                    "length": 2058,
+                                    "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                    "is_dependency": false,
+                                    "lines": "305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "BasicMarket",
+                                        "source_mapping": {
+                                            "start": 315,
+                                            "length": 12535,
+                                            "filename_relative": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/foreProtocol00/vulnerable/contracts/contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "filename_short": "contracts/protocol/markets/basic/BasicMarket.sol",
+                                            "is_dependency": false,
+                                            "lines": "11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "withdrawVerificationReward(uint256,bool)"
+                                }
+                            }
+                        }
+                    },
+                    "detector": {
+                        "description": "BasicMarket.withdrawVerificationReward(uint256,bool) (contracts/protocol/markets/basic/BasicMarket.sol#305-363) ignores return value by foreToken.transferFrom(address(this),v.verifier,toVerifier) (contracts/protocol/markets/basic/BasicMarket.sol#325-329)\n",
+                        "markdown": "[BasicMarket.withdrawVerificationReward(uint256,bool)](contracts/protocol/markets/basic/BasicMarket.sol#L305-L363) ignores return value by [foreToken.transferFrom(address(this),v.verifier,toVerifier)](contracts/protocol/markets/basic/BasicMarket.sol#L325-L329)\n",
+                        "first_markdown_element": "contracts/protocol/markets/basic/BasicMarket.sol#L305-L363",
+                        "id": "e0e4c0f182e7069f4eac04e67ddc7d8748e29b5998159f802e178aaad279dbaf",
+                        "check": "unchecked-transfer",
+                        "impact": "High",
+                        "confidence": "Medium"
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Denial of Service Vulnerability",
+            "reported_impact": "Critical",
+            "reported_likelihood": "High",
+            "cwe_classification": 400,
+            "vulnerability_class": "Denial of Service",
+            "vulnerability_subclass": "Resource Exhaustion",
+            "vulnerable_functions": [
+                "BasicMarket::withdrawVerificationReward()"
+            ],
+            "lines": "305-366",
+            "description": "The withdrawVerificationReward function attempts to transfer tokens from its own address using the transferFrom method. Regular ERC20 implementations typically do not allow for this kind of transfer without prior approval calls, leading to potential denial-of-service (DoS) attacks as the function can be made to fail consistently.The addVestingSchedule and changeBeneficiaryAddress functions in the vesting contract are crucial for managing vesting schedules and beneficiaries. However, both functions lack event emissions, which is a significant oversight. Events in smart contracts are essential for tracking changes on the blockchain, especially for key administrative actions"
+        },
+        {
+            "title": "Data Consistency",
+            "reported_impact": "Critical",
+            "reported_likelihood": "High",
+            "cwe_classification": 20,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Missing Input Validation",
+            "vulnerable_functions": [
+                "ForeProtocol::upgradeTier()"
+            ],
+            "lines": "",
+            "description": "The function upgradeTier enables a user to upgrade their NFT tier if they meet the verificationsDone requirement. However, the function does not check if the tier they are upgrading to actually exists in the _tiers mapping. As a result, a user might upgrade their NFT to a non-existent tier. If the owner later defines new tiers, this could result in data inconsistency where some users have upgraded to tiers they should not have been able to"
+        },
+        {
+            "title": "Denial of Service Vulnerability; Invalid Calculations",
+            "reported_impact": "Critical",
+            "reported_likelihood": "High",
+            "cwe_classification": 682,
+            "vulnerability_class": "Arithmetic",
+            "vulnerability_subclass": "Incorrect Calculation",
+            "vulnerable_functions": [
+                "BasicMarket::withdrawVerificationReward()"
+            ],
+            "lines": "305-366",
+            "description": "In cases where a verifier votes for the wrong side and is therefore eligible for a penalty, the function designed to calculate the amounts of toDisputeCreator and toHighGuard incorrectly uses the multipliedPowerOf  function instead of the powerOf function to calculate the amounts to transfer. This discrepancy becomes pronounced in scenarios where the NFT ID multiplier exceeds 100%. This difference can cause a denial of service (DoS) on the line: foreVerifiers.marketBurn(power • toDisputeCreator • toHighGuard)."
+        },
+        {
+            "title": "Mishandled Edge Case; Data Consistency",
+            "reported_impact": "High",
+            "reported_likelihood": "High",
+            "cwe_classification": 287,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Validation Logic Error",
+            "vulnerable_functions": [
+                "ForeVerifiers::isApprovedForAll()",
+                "ForeVerifiers::_transfer()"
+            ],
+            "lines": "",
+            "description": "The fore operator holds overriding control on the verification NFTs (vNFTs), which creates a centralized point of vulnerability. If the owner's private keys are compromised, an attacker can take over any vNFT, potentially devaluing them and extracting tokens. A vulnerability arises from the isApprovedForAll and _transfer() functions, which always approve an action if it originates from a foreOperator. With the setFactoryStatus function, there is a risk of introducing an erroneous address as a whitelisted factory or, if the owner's keys are compromised, a malicious address."
+        },
+        {
+            "title": "Requirements Violation; Data Consistency",
+            "reported_impact": "High",
+            "reported_likelihood": "High",
+            "cwe_classification": 20,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Input Validation Error",
+            "vulnerable_functions": [
+                "ProtocolConfig::constructor()",
+                "ProtocolConfig::_setConfig()"
+            ],
+            "lines": "",
+            "description": "The ProtocolConfig contract allows setting of market validation and dispute time periods without ensuring they align with the documentation constraints. Consequently, a market can be created with periods not matching the documented standards. With periods not restricted, malicious actors might exploit this flexibility, especially if shorter periods don't provide stakeholders adequate time to react"
+        },
+        {
+            "title": "Coarse-Grained Access Control",
+            "reported_impact": "High",
+            "reported_likelihood": "High",
+            "cwe_classification": 285,
+            "vulnerability_class": "Access Control",
+            "vulnerability_subclass": "Authorization",
+            "vulnerable_functions": [
+                "ForeVerifiers::isApprovedForAll()",
+                "ForeVerifiers::_transfer()"
+            ],
+            "lines": "",
+            "description": "The project's design gives sole privilege to the highGuard address to resolve disputes. While the protocolConfig contract's owner can change the highGuard, the exclusive reliance on a single address poses significant security risks. If control over the highGuard private key is compromised, an attacker could manipulate prediction market results for their advantage. An attacker with control over the highGuard address could unilaterally resolve disputes in their favor, potentially manipulating market outcomes and compromising the integrity of the entire system"
+        },
+        {
+            "title": "Requirements Violation",
+            "reported_impact": "High",
+            "reported_likelihood": "High",
+            "cwe_classification": 285,
+            "vulnerability_class": "Authorization",
+            "vulnerability_subclass": "Privilege Misuse",
+            "vulnerable_functions": [
+                "ProtocolConfig::"
+            ],
+            "lines": "",
+            "description": "Although it is stated that the highGuard address is a bunch of NFT holders, there is no such implementation in the contract. The flexibility of the high guard address allows the system owner to specify any entity, without the requirement for it to be a multi-sig wallet configuration or limited solely to NFT holders."
+        },
+        {
+            "title": "Requirement Violation; Data Consistency",
+            "reported_impact": "High",
+            "reported_likelihood": "High",
+            "cwe_classification": 754,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Missing Validation",
+            "vulnerable_functions": [
+                "ProtocolConfig::editTier()"
+            ],
+            "lines": "",
+            "description": "The editTier function lacks comprehensive checks to maintain the ordered and hierarchical structure of minVerifications and multipliers across tiers, potentially allowing for inconsistent tier configurations.There is a possibility of setting minVerifications for a tier to a value greater than its subsequent tier or lesser than its previous tier, leading to inconsistency in tier structuring"
+        },
+        {
+            "title": "Redundant Memory Allocation",
+            "reported_impact": "Medium",
+            "reported_likelihood": "High",
+            "cwe_classification": 0,
+            "vulnerability_class": "Gas Usage",
+            "vulnerability_subclass": "Redundant Memory Allocation",
+            "vulnerable_functions": [
+                "MarketLib::_predict()"
+            ],
+            "lines": "",
+            "description": "The line MarketLib.Market memory m = market; creates an in-memory copy of the storage variable market. Given the size of the struct (multiple variables), this can lead to a significant Gas overhead. Only one attribute of m (endPredictionTimestamp) is accessed afterward. It is wasteful to create an entire in-memory copy of the market for this purpose. It will lead to increased Gas cost for every invocation of the function, making predictions more expensive for users."
+        },
+        {
+            "title": "Absence of ReentrancyGuard for ERC721 Functions",
+            "reported_impact": "Medium",
+            "reported_likelihood": "High",
+            "cwe_classification": 280,
+            "vulnerability_class": "Reentrancy",
+            "vulnerability_subclass": "Missing Mitigations",
+            "vulnerable_functions": [
+                "BasicMarket::"
+            ],
+            "lines": "",
+            "description": "The project's contracts do not utilize the ReentrancyGuard for functions that interact with ERC721 tokens. Although the project adheres to the Checks-Effects-Interactions (CEI) pattern, which can help prevent reentrancy attacks, it remains best practice to implement ReentrancyGuard as an additional security layer. Without the explicit use of ReentrancyGuard, functions are potentially more exposed to reentrancy attacks even if the CEI pattern is followed. Not using the ReentrancyGuard is a deviation from accepted smart contract development best practices."
+        }
+    ]
+}

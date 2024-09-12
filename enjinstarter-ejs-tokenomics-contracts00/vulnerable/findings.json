@@ -1,0 +1,41 @@
+{
+  "description": {
+    "project_name": "enjinstarter ejs-staking-contracts",
+    "compiler_versions": ["0.8.0"]
+  },
+  "findings": [
+    {
+      "title": "Highly permissive owner access",
+      "reported_impact": "high",
+      "reported_likelihood": "high",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["StakingService::", "StakingPool::"],
+      "lines": "",
+      "description": "The owner can change the staking pool contract address, change the admin wallet, pause and unpause the contract, close staking pools, suspend and resume staking pools and stakes. Such functionality is critical and should be publicly described, so the users will be notified about it."
+    },
+    {
+      "title": "Possible code simplification",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Repeated code",
+      "vulnerable_functions": ["StakingService::"],
+      "lines": "",
+      "description": "Some require statements in code are repeated multiple times in different functions (staking pool info check). This leaves code duplications and makes code harder to read and refactor"
+    },
+    {
+      "title": "Floating pragma",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Unlocked pragma version",
+      "vulnerable_functions": [""],
+      "lines": "",
+      "description": "Locking the pragma helps ensure that contracts do not accidentally get deployed using, for example, an outdated compiler version that might introduce bugs that affect the contract system negatively."
+    }
+  ]
+}

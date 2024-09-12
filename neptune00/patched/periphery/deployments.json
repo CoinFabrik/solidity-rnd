@@ -1,0 +1,77 @@
+{
+  "1": {
+    "name": "Ethereum",
+    "store": "0x6579dF8f986e4A982F200DAfa0c1b955A438f620",
+    "protocol": "0xB452AC021a1151AAF342c1B75aA914E03e6503b5",
+    "npm": "0x57f12FE6A4e5fe819eec699FAdf9Db2D06606bB4",
+    "veNPM": "",
+    "gaugeControllerRegistry": "",
+    "liquidityGaugePool": "",
+    "stablecoin": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    "stablecoinName": "USD Coin",
+    "stablecoinSymbol": "USDC",
+    "stablecoinDecimals": 6
+  },
+  "42161": {
+    "name": "Arbitrum One",
+    "store": "0x6579dF8f986e4A982F200DAfa0c1b955A438f620",
+    "protocol": "0xB452AC021a1151AAF342c1B75aA914E03e6503b5",
+    "npm": "0x57f12FE6A4e5fe819eec699FAdf9Db2D06606bB4",
+    "veNPM": "",
+    "gaugeControllerRegistry": "",
+    "liquidityGaugePool": "",
+    "stablecoin": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    "stablecoinName": "USD Coin",
+    "stablecoinSymbol": "USDC",
+    "stablecoinDecimals": 6
+  },
+  "56": {
+    "name": "BNB Smart Chain",
+    "store": "0x6579dF8f986e4A982F200DAfa0c1b955A438f620",
+    "protocol": "0xB452AC021a1151AAF342c1B75aA914E03e6503b5",
+    "npm": "0x57f12FE6A4e5fe819eec699FAdf9Db2D06606bB4",
+    "veNPM": "",
+    "gaugeControllerRegistry": "",
+    "liquidityGaugePool": "",
+    "stablecoin": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+    "stablecoinName": "Binance-Peg USD Coin",
+    "stablecoinSymbol": "USDC",
+    "stablecoinDecimals": 18,
+    "neptuneLegends": "0xAAF54CEf71aa3B2Cba33fE06042A5C5e89de57eB",
+    "policyProofMinter": "0x51899ea193DB0d7ff61fD62dC569Fe5a941D77c5",
+    "merkleProofMinter": "0x7C0A47f9e4C91003081350aeaC9170510C754EF1"
+  },
+  "84531": {
+    "name": "Base Goerli",
+    "store": "0x52b124a19023edf0386a3d9e674fdd7e02b8a8a8",
+    "protocol": "0x3B60152bFEA33B894e06291aA2bB3404b8dfdC2B",
+    "npm": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
+    "stablecoin": "0xbdCDBD278467b84F67AEE5737Ddc83A9C054cC29",
+    "neptuneLegends": "0xd673f97cA6DC3f807E0EAA9d0271b165C2A6d657",
+    "policyProofMinter": "0x75C7109b889050659cDd8085D17f3eF2A2A9029B",
+    "merkleProofMinter": "0x11026faB94Fae24d483338840726A0db1bBf8390",
+    "veNPM": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
+    "gaugeControllerRegistry": "0x3bA2F20FF5481451E37Cfc97f50250aB10CAd8eF",
+    "liquidityGaugePools": [
+      {
+        "key": "0x7072696d65000000000000000000000000000000000000000000000000000000",
+        "address": "0x8cf777264f9D52B74A3751888c0b3fbeC7bfff17"
+      },
+      {
+        "key": "0x706f700000000000000000000000000000000000000000000000000000000000",
+        "address": "0x3FDB7114819694eDb9A44123E27405180EefEA57"
+      },
+      {
+        "key": "0x676d782d76310000000000000000000000000000000000000000000000000000",
+        "address": "0x793d2EDCa486C3ADE92255b1f59ab92d37272B69"
+      },
+      {
+        "key": "0x72646e742d763100000000000000000000000000000000000000000000000000",
+        "address": "0x1564d830999bf86C742EdF29E0D47b0Bfe6a4983"
+      }
+    ],
+    "stablecoinName": "Fake USD Coin",
+    "stablecoinSymbol": "USDC",
+    "stablecoinDecimals": 6
+  }
+}

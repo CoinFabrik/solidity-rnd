@@ -1,0 +1,95 @@
+{
+  "description": {
+    "project_name": "Diverse",
+    "compiler_versions": ["0.8.11"]
+  },
+  "findings": [
+    {
+      "title": "Highly Permissive Role Access",
+      "reported_impact": "Critical",
+      "reported_likelihood": "High",
+      "cwe_classification": 284,
+      "vulnerability_class": "Authorization",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["XARDMStaking::resetRewards()"],
+      "lines": "122-134",
+      "description": "The owner of the XARDMS Taking contract can withdraw ARDM tokens deposited by users using the resetRewards() function. When the total ARDM balance in the XARDMS take contract is greater than the total supply of xARDM, the owner can withdraw this difference as ARDM tokens. Although this difference occurs due to an external ARDM transfer to the contract in the form of rewards, share calculations for deposits made after the transfer will be calculated according to the new rate. This leads to a situation where any user who deposits ARDM tokens after the rewards transfer may suffer losses after the owner requests a rewards reset."
+    },
+    {
+      "title": "Front-Running Attack; Inflation Attack",
+      "reported_impact": "Critical",
+      "reported_likelihood": "High",
+      "cwe_classification": 190,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Integer Overflow",
+      "vulnerable_functions": ["XARDMStaking::deposit()"],
+      "lines": "76-94",
+      "description": "The vulnerability is related to a rounding issue in the deposit() function, as illustrated by the following equation: uint256 mintAmount = (_amount • totalxARDM) / totalARDM; An attacker can manipulate the denominator and cause the victim to receive zero or a portion of the vault."
+    },
+    {
+      "title": "Undocumented Behavior",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 113,
+      "vulnerability_class": "Documentation",
+      "vulnerability_subclass": "Missing Explanation",
+      "vulnerable_functions": ["XARDMStaking::onlyEOA()"],
+      "lines": "53-57",
+      "description": "The system is designed to allow EOA accounts, this may limit functionality"
+    },
+    {
+      "title": "Highly Permissive Role Access",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["XARDMStaking::deposit()"],
+      "lines": "76-94",
+      "description": "The owner of the XARDMStaking contract can change the penalty deadline and penalty fee values after users have deposited ARDM tokens based on the previous penalty values. Changing the penalty and fine deadline will affect users who have stakes in the system and will make them pay different fines than promised."
+    },
+    {
+      "title": "Requirements Violation; Race Condition",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 367,
+      "vulnerability_class": "Denial of Serive",
+      "vulnerability_subclass": "Race Condition",
+      "vulnerable_functions": [
+        "XARDMStaking::deposit()",
+        "XARDMStaking::withdraw()"
+      ],
+      "lines": "",
+      "description": "User deadlines are not modified when they make a deposit, as long as the deadline to pay the penalty has not yet arrived, and new deposits made are recorded to be processed with the same deadline. Users can wait until the last stage of the deadline by depositing a very small amount of tokens and then deposit the desired amount at the last minute to collect their rewards a few minutes later."
+    },
+    {
+      "title": "Unchecked Transfer",
+      "reported_impact": "Medium",
+      "reported_likelihood": "High",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Validation",
+      "vulnerable_functions": [
+        "XARDMStaking::deposit()",
+        "XARDMStaking::withdraw()",
+        "XARDMStaking::resetRewards()"
+      ],
+      "lines": "",
+      "description": "The deposit(), withdraw() and resetRewards() functions do not use the SafeERC20 library for checking the result of ERC20 token transfers. Tokens may not follow the ERC20 standard and return a false in case of transfer failure or not return any value at all"
+    },
+    {
+      "title": "Highly Permissive Role Access",
+      "reported_impact": "Medium",
+      "reported_likelihood": "High",
+      "cwe_classification": 284,
+      "vulnerability_class": "Authorization",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": [
+        "XARDMStaking::pause()",
+        "XARDMStaking::unpause()"
+      ],
+      "lines": "",
+      "description": "Highly Permissive Role Access Account with PAUSER_ROLE can pause the transferability of the XARDM token. This leads to a situation where the deposit() and withdrawal() functions of the XARDMStaking contract are affected by a denial of service vulnerability. As both systems are closely connected and there is functionality to pause deposits and withdrawals directly in XARDMStaking, the pausable nature of the XARDM token seems redundant."
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+diff --git a/node_modules/@opengsn/provider/dist/RelayClient.js b/node_modules/@opengsn/provider/dist/RelayClient.js
+index 6d2323e..510a003 100644
+--- a/node_modules/@opengsn/provider/dist/RelayClient.js
++++ b/node_modules/@opengsn/provider/dist/RelayClient.js
+@@ -176,8 +176,9 @@ class RelayClient {
+                 pingErrors: new Map()
+             };
+         }
++        const approvalData = await this.dependencies.asyncApprovalData(relayRequest)
+         if (this.config.performDryRunViewRelayCall) {
+-            const dryRunError = await this._verifyDryRunSuccessful(relayRequest);
++            const dryRunError = await this._verifyDryRunSuccessful(relayRequest, approvalData);
+             if (dryRunError != null) {
+                 relayingErrors.set(common_1.constants.DRY_RUN_KEY, dryRunError);
+                 return {
+@@ -208,7 +209,7 @@ class RelayClient {
+                     relayRequest.relayData.maxPriorityFeePerGas = (0, common_1.toHex)(relaySelectionResult.updatedGasFees.maxPriorityFeePerGas);
+                 }
+                 this.emit(new GsnEvents_1.GsnNextRelayEvent(activeRelay.relayInfo.relayUrl));
+-                relayingAttempt = await this._attemptRelay(activeRelay, relayRequest)
++                relayingAttempt = await this._attemptRelay(activeRelay, relayRequest, approvalData)
+                     .catch(error => ({ error }));
+                 if (relayingAttempt.auditPromise != null) {
+                     auditPromises.push(relayingAttempt.auditPromise);
+@@ -249,10 +250,10 @@ class RelayClient {
+         }
+         return { maxFeePerGas, maxPriorityFeePerGas };
+     }
+-    async _attemptRelay(relayInfo, relayRequest) {
++    async _attemptRelay(relayInfo, relayRequest, approvalData) {
+         this.logger.info(`attempting relay: ${JSON.stringify(relayInfo)} transaction: ${JSON.stringify(relayRequest)}`);
+         await this.fillRelayInfo(relayRequest, relayInfo);
+-        const httpRequest = await this._prepareRelayHttpRequest(relayRequest, relayInfo);
++        const httpRequest = await this._prepareRelayHttpRequest(relayRequest, relayInfo, approvalData);
+         this.emit(new GsnEvents_1.GsnValidateRequestEvent());
+         const viewCallGasLimit = await this.dependencies.contractInteractor.calculateDryRunCallGasLimit(relayRequest.relayData.paymaster, relayRequest.relayData.relayWorker, (0, common_1.toBN)(relayRequest.relayData.maxFeePerGas), (0, common_1.toBN)(this.config.maxViewableGasLimit), (0, common_1.toBN)(this.config.minViewableGasLimit));
+         const error = await this._verifyViewCallSuccessful(relayInfo, (0, common_1.asRelayCallAbi)(httpRequest), viewCallGasLimit, false);
+@@ -371,12 +372,11 @@ class RelayClient {
+         relayRequest.relayData.transactionCalldataGasUsed =
+             await this.dependencies.contractInteractor.estimateCalldataCostForRequest(relayRequest, this.config);
+     }
+-    async _prepareRelayHttpRequest(relayRequest, relayInfo) {
++    async _prepareRelayHttpRequest(relayRequest, relayInfo, approvalData) {
+         var _a;
+         this.emit(new GsnEvents_1.GsnSignRequestEvent());
+         const signature = await this.dependencies.accountManager.sign(this.config.domainSeparatorName, relayRequest);
+         const relayRequestId = this._getRelayRequestID(relayRequest, signature);
+-        const approvalData = await this.dependencies.asyncApprovalData(relayRequest, relayRequestId);
+         if ((0, ethereumjs_util_1.toBuffer)(relayRequest.relayData.paymasterData).length >
+             this.config.maxPaymasterDataLength) {
+             throw new Error('actual paymasterData larger than maxPaymasterDataLength');
+@@ -551,7 +551,7 @@ class RelayClient {
+         }
+         return (0, VerifierUtils_1.createVerifierApprovalDataCallback)(httpWrapper, this.logger, config.domainSeparatorName, chainId, config.verifierServerApiKey, config.verifierServerUrl);
+     }
+-    async _verifyDryRunSuccessful(relayRequest) {
++    async _verifyDryRunSuccessful(relayRequest, approvalData) {
+         // TODO: only 3 fields are needed, extract fields instead of building stub object
+         const relayWorkerAddress = common_1.constants.DRY_RUN_ADDRESS;
+         const maxMaxFeePerGas = '0';
+@@ -587,7 +587,7 @@ class RelayClient {
+             domainSeparatorName: this.config.domainSeparatorName,
+             relayRequest,
+             signature: '0x',
+-            approvalData: '0x',
++            approvalData: approvalData,
+             maxAcceptanceBudget: maxAcceptanceBudget.toString()
+         };
+         return await this._verifyViewCallSuccessful(dryRunRelayInfo, relayCallABI, viewCallGasLimit, true);

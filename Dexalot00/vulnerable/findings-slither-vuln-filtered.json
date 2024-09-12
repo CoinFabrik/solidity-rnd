@@ -1,0 +1,662 @@
+{
+    "description": {
+        "project_name": "Dexalot",
+        "compiler_versions": [
+            "0.8.17"
+        ]
+    },
+    "findings": [
+        {
+            "title": "Upgradeability Issues",
+            "reported_impact": "medium",
+            "reported_likelihood": "high",
+            "cwe_classification": 1006,
+            "vulnerability_class": "Best practices",
+            "vulnerability_subclass": "Upgradeability",
+            "vulnerable_functions": [],
+            "lines": "",
+            "description": "The contract is upgradable but does not follow the upgradability best practices by not adding a gap in the contract storage. This may lead to contract storage layout corruption during an upgrade. The contract inherits EIP712Upgradeable that contains a __gap variable, but it is a best practice to create a new __gap variable that will be more accessible due to variables order."
+        },
+        {
+            "title": "Unsafe Approval",
+            "reported_impact": "high",
+            "reported_likelihood": "high",
+            "cwe_classification": 0,
+            "vulnerability_class": "Best practices",
+            "vulnerability_subclass": "Unsafe Approval",
+            "vulnerable_functions": [
+                "MainnetRFQ::_executeSwap()"
+            ],
+            "lines": "275, 283",
+            "description": "The contract MainnetRFQ uses the approve() function inside of the _executeSwap(), which does not update the allowance, but replaces it. This creates a problem when a taker, which is a smart-contract, makes several swaps, and does not withdraw the previous approval."
+        },
+        {
+            "title": "EIP Standard Violation: Missing Value Check",
+            "reported_impact": "high",
+            "reported_likelihood": "low",
+            "cwe_classification": 347,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Improper verification of signature",
+            "vulnerable_functions": [
+                "MainnetRFQ::_recoverSigner()"
+            ],
+            "lines": "165-189",
+            "description": "According to the EIP-1271 implementation, the s value in the signature verification process should be checked against an upper value. The function _recoverSigner() does not implement an upper bound check for the variable s."
+        },
+        {
+            "title": "Missing Zero Address Validation",
+            "reported_impact": "low",
+            "reported_likelihood": "medium",
+            "cwe_classification": 20,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Missing Zero Address Validation",
+            "vulnerable_functions": [
+                "MainnetRFQ::initialize()",
+                "MainnetRFQ::addAdmin()",
+                "MainnetRFQ::addTrustedContract()"
+            ],
+            "lines": "81-91, 181-184, 210-217",
+            "description": "Address parameters are being used without checking against the possibility of 0x0.",
+            "possible_found_in": [
+                {
+                    "element": {
+                        "type": "variable",
+                        "name": "_swapSigner",
+                        "source_mapping": {
+                            "start": 3208,
+                            "length": 19,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "81",
+                            "starting_column": 25,
+                            "ending_column": 44
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "initialize",
+                                "source_mapping": {
+                                    "start": 3188,
+                                    "length": 335,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "MainnetRFQ",
+                                        "source_mapping": {
+                                            "start": 1333,
+                                            "length": 10418,
+                                            "filename_relative": "contracts/MainnetRFQ.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                            "filename_short": "contracts/MainnetRFQ.sol",
+                                            "is_dependency": false,
+                                            "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "initialize(address)"
+                                }
+                            }
+                        }
+                    },
+                    "detector": {
+                        "description": "MainnetRFQ.initialize(address)._swapSigner (contracts/MainnetRFQ.sol#81) lacks a zero-check on :\n\t\t- swapSigner = _swapSigner (contracts/MainnetRFQ.sol#89)\n\t\t- rebalancer = _swapSigner (contracts/MainnetRFQ.sol#90)\n",
+                        "markdown": "[MainnetRFQ.initialize(address)._swapSigner](contracts/MainnetRFQ.sol#L81) lacks a zero-check on :\n\t\t- [swapSigner = _swapSigner](contracts/MainnetRFQ.sol#L89)\n\t\t- [rebalancer = _swapSigner](contracts/MainnetRFQ.sol#L90)\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L81",
+                        "id": "3b7523ea298387f3ec3bc4d322250c97b4b97e99c6f2cdba8c74227c2106cbe7",
+                        "check": "missing-zero-check",
+                        "impact": "Low",
+                        "confidence": "Medium"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "variable",
+                        "name": "_address",
+                        "source_mapping": {
+                            "start": 7216,
+                            "length": 16,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "181",
+                            "starting_column": 23,
+                            "ending_column": 39
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "addAdmin",
+                                "source_mapping": {
+                                    "start": 7198,
+                                    "length": 213,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "181, 182, 183, 184",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "MainnetRFQ",
+                                        "source_mapping": {
+                                            "start": 1333,
+                                            "length": 10418,
+                                            "filename_relative": "contracts/MainnetRFQ.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                            "filename_short": "contracts/MainnetRFQ.sol",
+                                            "is_dependency": false,
+                                            "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "addAdmin(address)"
+                                }
+                            }
+                        },
+                        "additional_fields": {
+                            "target": "parameter",
+                            "convention": "mixedCase"
+                        }
+                    },
+                    "detector": {
+                        "description": "Parameter MainnetRFQ.addAdmin(address)._address (contracts/MainnetRFQ.sol#181) is not in mixedCase\n",
+                        "markdown": "Parameter [MainnetRFQ.addAdmin(address)._address](contracts/MainnetRFQ.sol#L181) is not in mixedCase\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L181",
+                        "id": "5a50e3a7138ff7244e8779c2814c30ad4e943f7191df89c0b1a4c00dc8fc4c29",
+                        "check": "naming-convention",
+                        "impact": "Informational",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "variable",
+                        "name": "_organization",
+                        "source_mapping": {
+                            "start": 8459,
+                            "length": 29,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "212",
+                            "starting_column": 9,
+                            "ending_column": 38
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "addTrustedContract",
+                                "source_mapping": {
+                                    "start": 8395,
+                                    "length": 330,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "210, 211, 212, 213, 214, 215, 216, 217",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "MainnetRFQ",
+                                        "source_mapping": {
+                                            "start": 1333,
+                                            "length": 10418,
+                                            "filename_relative": "contracts/MainnetRFQ.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                            "filename_short": "contracts/MainnetRFQ.sol",
+                                            "is_dependency": false,
+                                            "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "addTrustedContract(address,string)"
+                                }
+                            }
+                        },
+                        "additional_fields": {
+                            "target": "parameter",
+                            "convention": "mixedCase"
+                        }
+                    },
+                    "detector": {
+                        "description": "Parameter MainnetRFQ.addTrustedContract(address,string)._organization (contracts/MainnetRFQ.sol#212) is not in mixedCase\n",
+                        "markdown": "Parameter [MainnetRFQ.addTrustedContract(address,string)._organization](contracts/MainnetRFQ.sol#L212) is not in mixedCase\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L212",
+                        "id": "71375c0f706691f45c19a353bc447ff052f53133598b324ea3deed06c671d889",
+                        "check": "naming-convention",
+                        "impact": "Informational",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "variable",
+                        "name": "_contract",
+                        "source_mapping": {
+                            "start": 8432,
+                            "length": 17,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "211",
+                            "starting_column": 9,
+                            "ending_column": 26
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "addTrustedContract",
+                                "source_mapping": {
+                                    "start": 8395,
+                                    "length": 330,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "210, 211, 212, 213, 214, 215, 216, 217",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "MainnetRFQ",
+                                        "source_mapping": {
+                                            "start": 1333,
+                                            "length": 10418,
+                                            "filename_relative": "contracts/MainnetRFQ.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                            "filename_short": "contracts/MainnetRFQ.sol",
+                                            "is_dependency": false,
+                                            "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "addTrustedContract(address,string)"
+                                }
+                            }
+                        },
+                        "additional_fields": {
+                            "target": "parameter",
+                            "convention": "mixedCase"
+                        }
+                    },
+                    "detector": {
+                        "description": "Parameter MainnetRFQ.addTrustedContract(address,string)._contract (contracts/MainnetRFQ.sol#211) is not in mixedCase\n",
+                        "markdown": "Parameter [MainnetRFQ.addTrustedContract(address,string)._contract](contracts/MainnetRFQ.sol#L211) is not in mixedCase\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L211",
+                        "id": "ba40f623341ff05831a84c207656230449f255d364b645bb6df3fb459a22422f",
+                        "check": "naming-convention",
+                        "impact": "Informational",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "variable",
+                        "name": "_swapSigner",
+                        "source_mapping": {
+                            "start": 3208,
+                            "length": 19,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "81",
+                            "starting_column": 25,
+                            "ending_column": 44
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "initialize",
+                                "source_mapping": {
+                                    "start": 3188,
+                                    "length": 335,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "MainnetRFQ",
+                                        "source_mapping": {
+                                            "start": 1333,
+                                            "length": 10418,
+                                            "filename_relative": "contracts/MainnetRFQ.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                            "filename_short": "contracts/MainnetRFQ.sol",
+                                            "is_dependency": false,
+                                            "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "initialize(address)"
+                                }
+                            }
+                        },
+                        "additional_fields": {
+                            "target": "parameter",
+                            "convention": "mixedCase"
+                        }
+                    },
+                    "detector": {
+                        "description": "Parameter MainnetRFQ.initialize(address)._swapSigner (contracts/MainnetRFQ.sol#81) is not in mixedCase\n",
+                        "markdown": "Parameter [MainnetRFQ.initialize(address)._swapSigner](contracts/MainnetRFQ.sol#L81) is not in mixedCase\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L81",
+                        "id": "ca4e86e4e9b7f3c83db253e667981faba153179ad22597b75d1ddded983c6f6c",
+                        "check": "naming-convention",
+                        "impact": "Informational",
+                        "confidence": "High"
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Missing Array Length Check",
+            "reported_impact": "low",
+            "reported_likelihood": "medium",
+            "cwe_classification": 129,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Improper Validation of array index",
+            "vulnerable_functions": [
+                "MainnetRFQ::batchClaimBalance()"
+            ],
+            "lines": "279-296",
+            "description": "The function batchClaimBalance() lacks the array length equality checks, which will lead to unexpected behavior if the length of arrays is different.",
+            "possible_found_in": [
+                {
+                    "element": {
+                        "type": "function",
+                        "name": "batchClaimBalance",
+                        "source_mapping": {
+                            "start": 10866,
+                            "length": 727,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296",
+                            "starting_column": 5,
+                            "ending_column": 6
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "contract",
+                                "name": "MainnetRFQ",
+                                "source_mapping": {
+                                    "start": 1333,
+                                    "length": 10418,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                    "starting_column": 1,
+                                    "ending_column": 2
+                                }
+                            },
+                            "signature": "batchClaimBalance(address[],uint256[])"
+                        }
+                    },
+                    "detector": {
+                        "description": "MainnetRFQ.batchClaimBalance(address[],uint256[]) (contracts/MainnetRFQ.sol#279-296) has external calls inside a loop: (success) = address(rebalancer).call{value: _amounts[i]}() (contracts/MainnetRFQ.sol#286)\n",
+                        "markdown": "[MainnetRFQ.batchClaimBalance(address[],uint256[])](contracts/MainnetRFQ.sol#L279-L296) has external calls inside a loop: [(success) = address(rebalancer).call{value: _amounts[i]}()](contracts/MainnetRFQ.sol#L286)\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L279-L296",
+                        "id": "aa99f5d136f9bd001c9cd86b51533ada19ea950cb6b11ea97bb95f4d4a5baa7f",
+                        "check": "calls-loop",
+                        "impact": "Low",
+                        "confidence": "Medium"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "function",
+                        "name": "batchClaimBalance",
+                        "source_mapping": {
+                            "start": 10866,
+                            "length": 727,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296",
+                            "starting_column": 5,
+                            "ending_column": 6
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "contract",
+                                "name": "MainnetRFQ",
+                                "source_mapping": {
+                                    "start": 1333,
+                                    "length": 10418,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                    "starting_column": 1,
+                                    "ending_column": 2
+                                }
+                            },
+                            "signature": "batchClaimBalance(address[],uint256[])"
+                        }
+                    },
+                    "detector": {
+                        "description": "MainnetRFQ.batchClaimBalance(address[],uint256[]) (contracts/MainnetRFQ.sol#279-296) compares to a boolean constant:\n\t-require(bool,string)(success == true,RF-TF-01) (contracts/MainnetRFQ.sol#287)\n",
+                        "markdown": "[MainnetRFQ.batchClaimBalance(address[],uint256[])](contracts/MainnetRFQ.sol#L279-L296) compares to a boolean constant:\n\t-[require(bool,string)(success == true,RF-TF-01)](contracts/MainnetRFQ.sol#L287)\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L279-L296",
+                        "id": "c81e022d70c5b8eaf321ea845704e4c72c8c1f2627f3d34eb16b80a71eb880ad",
+                        "check": "boolean-equal",
+                        "impact": "Informational",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "function",
+                        "name": "batchClaimBalance",
+                        "source_mapping": {
+                            "start": 10866,
+                            "length": 727,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296",
+                            "starting_column": 5,
+                            "ending_column": 6
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "contract",
+                                "name": "MainnetRFQ",
+                                "source_mapping": {
+                                    "start": 1333,
+                                    "length": 10418,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                    "starting_column": 1,
+                                    "ending_column": 2
+                                }
+                            },
+                            "signature": "batchClaimBalance(address[],uint256[])"
+                        }
+                    },
+                    "detector": {
+                        "description": "Low level call in MainnetRFQ.batchClaimBalance(address[],uint256[]) (contracts/MainnetRFQ.sol#279-296):\n\t- (success) = address(rebalancer).call{value: _amounts[i]}() (contracts/MainnetRFQ.sol#286)\n",
+                        "markdown": "Low level call in [MainnetRFQ.batchClaimBalance(address[],uint256[])](contracts/MainnetRFQ.sol#L279-L296):\n\t- [(success) = address(rebalancer).call{value: _amounts[i]}()](contracts/MainnetRFQ.sol#L286)\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L279-L296",
+                        "id": "5679bff18c3528993eaf7480dd9544d5775bf474ab657b5c3139f90f87cf298a",
+                        "check": "low-level-calls",
+                        "impact": "Informational",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "variable",
+                        "name": "_amounts",
+                        "source_mapping": {
+                            "start": 10921,
+                            "length": 27,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "279",
+                            "starting_column": 60,
+                            "ending_column": 87
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "batchClaimBalance",
+                                "source_mapping": {
+                                    "start": 10866,
+                                    "length": 727,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "MainnetRFQ",
+                                        "source_mapping": {
+                                            "start": 1333,
+                                            "length": 10418,
+                                            "filename_relative": "contracts/MainnetRFQ.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                            "filename_short": "contracts/MainnetRFQ.sol",
+                                            "is_dependency": false,
+                                            "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "batchClaimBalance(address[],uint256[])"
+                                }
+                            }
+                        },
+                        "additional_fields": {
+                            "target": "parameter",
+                            "convention": "mixedCase"
+                        }
+                    },
+                    "detector": {
+                        "description": "Parameter MainnetRFQ.batchClaimBalance(address[],uint256[])._amounts (contracts/MainnetRFQ.sol#279) is not in mixedCase\n",
+                        "markdown": "Parameter [MainnetRFQ.batchClaimBalance(address[],uint256[])._amounts](contracts/MainnetRFQ.sol#L279) is not in mixedCase\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L279",
+                        "id": "2474cb59c974b1b9e97154c933e1b65a713f351c9a2dfe00c71c9bcce505aebb",
+                        "check": "naming-convention",
+                        "impact": "Informational",
+                        "confidence": "High"
+                    }
+                },
+                {
+                    "element": {
+                        "type": "variable",
+                        "name": "_assets",
+                        "source_mapping": {
+                            "start": 10893,
+                            "length": 26,
+                            "filename_relative": "contracts/MainnetRFQ.sol",
+                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                            "filename_short": "contracts/MainnetRFQ.sol",
+                            "is_dependency": false,
+                            "lines": "279",
+                            "starting_column": 32,
+                            "ending_column": 58
+                        },
+                        "type_specific_fields": {
+                            "parent": {
+                                "type": "function",
+                                "name": "batchClaimBalance",
+                                "source_mapping": {
+                                    "start": 10866,
+                                    "length": 727,
+                                    "filename_relative": "contracts/MainnetRFQ.sol",
+                                    "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                    "filename_short": "contracts/MainnetRFQ.sol",
+                                    "is_dependency": false,
+                                    "lines": "279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296",
+                                    "starting_column": 5,
+                                    "ending_column": 6
+                                },
+                                "type_specific_fields": {
+                                    "parent": {
+                                        "type": "contract",
+                                        "name": "MainnetRFQ",
+                                        "source_mapping": {
+                                            "start": 1333,
+                                            "length": 10418,
+                                            "filename_relative": "contracts/MainnetRFQ.sol",
+                                            "filename_absolute": "/home/francisco/Documentos/Projects/Goose/goose/Dexalot00/vulnerable/Dexalot/contracts/MainnetRFQ.sol",
+                                            "filename_short": "contracts/MainnetRFQ.sol",
+                                            "is_dependency": false,
+                                            "lines": "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304",
+                                            "starting_column": 1,
+                                            "ending_column": 2
+                                        }
+                                    },
+                                    "signature": "batchClaimBalance(address[],uint256[])"
+                                }
+                            }
+                        },
+                        "additional_fields": {
+                            "target": "parameter",
+                            "convention": "mixedCase"
+                        }
+                    },
+                    "detector": {
+                        "description": "Parameter MainnetRFQ.batchClaimBalance(address[],uint256[])._assets (contracts/MainnetRFQ.sol#279) is not in mixedCase\n",
+                        "markdown": "Parameter [MainnetRFQ.batchClaimBalance(address[],uint256[])._assets](contracts/MainnetRFQ.sol#L279) is not in mixedCase\n",
+                        "first_markdown_element": "contracts/MainnetRFQ.sol#L279",
+                        "id": "5428758cbd38937a7f3c1f1f4abff2f8a322f7f02973f0d412f8302c717a5d3f",
+                        "check": "naming-convention",
+                        "impact": "Informational",
+                        "confidence": "High"
+                    }
+                }
+            ]
+        }
+    ]
+}

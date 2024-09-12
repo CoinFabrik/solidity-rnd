@@ -1,0 +1,1035 @@
+[
+  {
+    "title": "Highly permissive owner access",
+    "audit": "enjinstarter",
+    "reported_impact": "high",
+    "reported_likelihood": "high",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["StakingService::", "StakingPool::"],
+    "lines": "",
+    "description": "The owner can change the staking pool contract address, change the admin wallet, pause and unpause the contract, close staking pools, suspend and resume staking pools and stakes. Such functionality is critical and should be publicly described, so the users will be notified about it."
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "manilla",
+    "reported_impact": "high",
+    "reported_likelihood": "medium",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access control",
+    "vulnerability_subclass": "Authorization",
+    "vulnerable_functions": ["Manilla::"],
+    "lines": "",
+    "description": "The constructor mints tokens to a user-supplied address, adminAccount. This address can be different from the caller. This can lead to minting more tokens than intended"
+  },
+  {
+    "title": "Token Supply Manipulation",
+    "audit": "virtuswap",
+    "reported_impact": "high",
+    "reported_likelihood": "medium",
+    "cwe_classification": 691,
+    "vulnerability_class": "MEV",
+    "vulnerability_subclass": "Insufficient Control Flow Management",
+    "vulnerable_functions": [
+      "vGlobalMinter::newVesting()",
+      "vGlobalMinter::arbitraryTransfer()"
+    ],
+    "lines": "62",
+    "description": "In the newVesting() and arbitraryTransfer() functions, the requirement to only release unlocked tokens is being executed incorrectly.\\n\\n The require(amount <= unlockedBalance) statement only checks that the amount is less than the unlockedBalance variable, but both functions should also reduce the remaining unlocked token balance.\\n\\n Lack of the unlockedBalance variable reduction can lead to a situation where more VRSW tokens are released than described in the tokenomy."
+  },
+  {
+    "title": "Best Practice Violation - Lock of Native Tokens",
+    "audit": "sha2",
+    "reported_impact": "medium",
+    "reported_likelihood": "medium",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Insufficient Control Flow Management",
+    "vulnerable_functions": ["NativeMetaTransaction::executeMetaTransaction()"],
+    "lines": "",
+    "description": "It is considered following best practices to avoid unclear situations and prevent common attack vectors. The contract accepts native tokens in the executeMetaTransaction() payable function, but there are no mechanisms for withdrawals. This may lead to native coins being locked in the contract."
+  },
+  {
+    "title": "Invalid Calculations",
+    "audit": "virtuswap",
+    "reported_impact": "high",
+    "reported_likelihood": "high",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Incorrect Calculation",
+    "vulnerable_functions": [
+      "vGlobalMinter::setEpochParams()",
+      "vGlobalMinter::nextEpochTransfer()"
+    ],
+    "lines": "87-125",
+    "description": "Calling the setEpochParams() function with block.timestamp which makes the check block.timestamp >= startEpochTime + epochDuration pass will cause a partial lock of the rewards paid when calling nextEpochTransfer(). \\n\\nThis is driven by the fact that _epochTransition() is triggered and param startEpochTime used for reward calculation is forwarded to a new timestamp"
+  },
+  {
+    "title": "Inconsistent Usage of External Libraries",
+    "audit": "sha2",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "External Libraries",
+    "vulnerable_functions": [""],
+    "lines": "",
+    "description": "All contracts use OpenZeppelin external libraries heavily. However, the Funnel contract imports the solmate ERC20 and SafeTransferLib libraries. This is inconsistent with overall external library usage."
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "sha2",
+    "reported_impact": "high",
+    "reported_likelihood": "high",
+    "cwe_classification": 0,
+    "vulnerability_class": "Denial of Service",
+    "vulnerability_subclass": "Data inconsistency",
+    "vulnerable_functions": [
+      "Funnel::allowance()",
+      "Funnel::transfer()",
+      "Funnel::transferFrom()"
+    ],
+    "lines": "",
+    "description": "The approvals performed in the Funnel contract are not connected with the approvals done in the _baseToken tokens. The EIP-5827 should check if it has enough allowance in _baseToken in functions allowance(), transferFrom(), and transfer(). In situations where the allowance in _baseToken is less than the allowance calculated by Funnel, there will be data inconsistency and denial of service in transfer functions."
+  },
+  {
+    "title": "Unverifiable Logic",
+    "audit": "sha2",
+    "reported_impact": "high",
+    "reported_likelihood": "high",
+    "cwe_classification": 829,
+    "vulnerability_class": "Unexpected Transfers",
+    "vulnerability_subclass": "Untrusted sources",
+    "vulnerable_functions": ["Funnel::ERC20", "Funnel::SafeTransferLib"],
+    "lines": "",
+    "description": "The Funnel contract uses the functionality of the external solmatecontracts, which are out of the scope of this audit and whose description states that it is an experimental software. Therefore, their security cannot be guaranteed, and their usage may lead to unexpected behavior"
+  },
+  {
+    "title": "Invalid Calculations",
+    "audit": "virtuswap",
+    "reported_impact": "high",
+    "reported_likelihood": "medium",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Incorrect Calculation",
+    "vulnerable_functions": [
+      "vChainMinter::_availableTokens()",
+      "vChainMinter::_availableTokensForNextEpoch()"
+    ],
+    "lines": "294,308",
+    "description": "In the `_availableTokens()` and `_availableTokensForNextEpoch()` functions, calculations are done incorrectly.\\n\\n Both functions are not taking into account that calculations from the block.timestamp can be greater than the divisor in the function equations.\\n\\n This can lead to a situation where the amount of tokens calculated is greater than the actual amount of rewards provided if the prepareForNextEpoch() function is not used correctly.\\n\\n In the `_availableTokensForNextEpoch()` function, the `epochDuration`  variable is used incorrectly in the dividend in case when the  `nextEpochDuration > 0`."
+  },
+  {
+    "title": "Denial of Service; Fund Lock",
+    "audit": "virtuswap",
+    "reported_impact": "high",
+    "reported_likelihood": "medium",
+    "cwe_classification": 362,
+    "vulnerability_class": "Denial of Service",
+    "vulnerability_subclass": "Race condition",
+    "vulnerable_functions": ["vChainMinter::setStakerFactory()"],
+    "lines": "91-96",
+    "description": "In the setStakerFactory() function, the stakerFactory variable can be changed even when the current vStakerFactory has active vStaker contracts with deposited user funds.\\n\\n In the event of changing the stakerFactory variable, users of the old vStaker contracts will not be able to claim their earned rewards. All calculations done in the vStaker contracts will be incorrect.\\n\\n Additionally, the setAllocationPoints() function will be affected, as the totalAllocationPoints variable will contain the old allocation points from the old vStakerFactory vStaker contracts.\\n\\n Changing the stakeFactory after it is set and in use will lead to an unusable staking system"
+  },
+  {
+    "title": "Invalid Calculations",
+    "audit": "virtuswap",
+    "reported_impact": "high",
+    "reported_likelihood": "low",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Incorrect Calculation",
+    "vulnerable_functions": ["vGlobalMinter::nextEpochTransfer()"],
+    "lines": "87-105",
+    "description": "In the nextEpochTransfer() function, there is a flaw in the logic of the epoch transition.\\n\\n In case of calling the nextEpochTransfer() for the first time after the emissionStartTs, the rewards for epoch 0 will be locked inside the contract."
+  },
+  {
+    "title": "Missing Validation",
+    "audit": "virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "medium",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Input Validation",
+    "vulnerable_functions": ["vGlobalMinter::constructor()"],
+    "lines": "",
+    "description": "It is considered that the project should be consistent and contain no self-contradictions.\\n\\n Lack of validation of the _emissionStartTs argument in vGlobalMinter.sol constructor(). Emission should not start in the past. emissionStartTs should be in the future.\\n\\n This may lead to unexpected value processed by the contract."
+  },
+  {
+    "title": "Requirements Violation",
+    "audit": "manilla",
+    "reported_impact": "high",
+    "reported_likelihood": "medium",
+    "cwe_classification": 0,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing validation",
+    "vulnerable_functions": ["Manilla::"],
+    "lines": "",
+    "description": "The implementation of the system or function does not adhere to the high-level, broad system, technical, or functional requirements. The provided documentation states that the total token supply is 1 billion. However, the implementation has no limitation implemented to make sure this number is not exceeded. This can lead to minting more tokens than intended"
+  },
+  {
+    "title": "Missing Events",
+    "audit": "virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 778,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Missing events",
+    "vulnerable_functions": ["vTokenomicsParams::constructor()"],
+    "lines": "",
+    "description": "Events for critical state changes should be emitted for tracking things off-chain.\\n\\n Missing event inside constructor() of vTokenomicsParams, tokenomics parameters are updated and UpdateTokenomicsParams should be emitted like in updateParams()."
+  },
+  {
+    "title": "Requirements Violation; Invalid Hardcoded Value",
+    "audit": "virtuswap",
+    "reported_impact": "medium",
+    "reported_likelihood": "medium",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Lack of documentation",
+    "vulnerable_functions": ["EmissionMath::_calculateEmission()"],
+    "lines": "80-95",
+    "description": "In the EmissionMath library, the constants V and v are declared. These variables are used in the calculation of the decreasing release schedule in the _calculateEmission() function. \\n\\nIn the requirement from the project whitepaper, it is stated that the amount released each year should be based on an annual percentage decrease of 20%.\\n\\n With the current values, the first year release is around 20% of the initial amount of rewards, but all the consecutive years are around 16.84% decrements.\\n\\n This leads to a situation where more tokens are released thanexpected."
+  },
+  {
+    "title": "Unclear Use of the Virtual Specifier",
+    "audit": "sha2",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Redundant code",
+    "vulnerable_functions": ["Funnel::"],
+    "lines": "",
+    "description": "There are functions in the contracts that are declared with the virtual specifier. These functions are not expected to be overridden, so the use of the virtual specifier is redundant."
+  },
+  {
+    "title": "NatSpec Comment Contradiction",
+    "audit": "virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 0,
+    "vulnerability_class": "N/A",
+    "vulnerability_subclass": "?",
+    "vulnerable_functions": ["vChainMinter::transferRewards()"],
+    "lines": "160",
+    "description": "It is considered that the project should be consistent and contain no self-contradictions.\\n\\n The NatSpec comments of the transferRewards() imply that the caller must be a registered staker with a non-zero allocation point.\\n\\n Actually, staker can have a non-zero allocation point, in case he had rewards before.\\n\\n This may lead to wrong assumptions about the code's purpose."
+  },
+
+  {
+    "title": "Unauthorized Access To Critical Functions",
+    "audit": "ForeProtocol",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 285,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Authorization",
+    "vulnerable_functions": ["BasicMarket.sol::withdrawVerificationReward()"],
+    "lines": "305-366",
+    "description": "The function lacks proper access controls, allowing any external party to dictate how verifier rewards are withdrawn. This design flaw can be exploited by a malicious actor to control the distribution of power between NFT verifiers, potentially gaining undue advantages in future markets."
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "ForeProtocol",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 20,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Input Validation",
+    "vulnerable_functions": ["ForeProtocol.sol::upgradeTier()"],
+    "lines": "",
+    "description": "The function upgradeTier enables a user to upgrade their NFT tier if they meet the verificationsDone requirement. However, the function does not check if the tier they are upgrading to actually exists in the _tiers mapping. As a result, a user might upgrade their NFT to a non-existent tier. If the owner later defines new tiers, this could result in data inconsistency where some users have upgraded to tiers they should not have been able to"
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "LitLab",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 0,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Validation",
+    "vulnerable_functions": ["CyberTitansTournament.sol::startTournament()"],
+    "lines": "169",
+    "description": "The function startTournament() incorrectly compares _cttPlayers with LITTPlayers in the check: require(_cttPlayers == tournament.numOfTokenPlayers, BadLITTPlayers) This will lead to incorrect data management since the checked variable is not the correct one. As a consequence, this function does not work as intended."
+  },
+  {
+    "title": "Invalid Calculations",
+    "audit": "LitLab",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Incorrect Calculation",
+    "vulnerable_functions": ["LITTVestingContract.sol::_executeVesting()"],
+    "lines": "185-209",
+    "description": "In the _executeVesting() function, the tokensPerSecond value is being counted incorrectly. This is because the calculation does not take into account the portion of the tokens that are released on the TGE.This leads to situations in which tokens are released too quickly."
+  },
+  {
+    "title": "Invalid Calculations",
+    "audit": "LitLab",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Incorrect Calculation",
+    "vulnerable_functions": [
+      "LitlabPreStakingBox.sol::_calculateVestingTokens()"
+    ],
+    "lines": "195-218",
+    "description": "In the _calculateVestingTokens() function, the tokensPerSecond value is being counted incorrectly. This is because the calculation does not take into account the portion of the tokens that can be released on the TGE.This leads to situations in which more tokens can be released than the vested amount. Users can wait the whole vesting period and call withdraw() first and withdrawInitial() afterward to extract 115% of the vested amount."
+  },
+  {
+    "title": "Highly Permissive Role Access",
+    "audit": "Diverse",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["XARDMStaking.sol::resetRewards()"],
+    "lines": "122-134",
+    "description": "The owner of the XARDMS Taking contract can withdraw ARDM tokens deposited by users using the resetRewards() function. When the total ARDM balance in the XARDMS take contract is greater than the total supply of xARDM, the owner can withdraw this difference as ARDM tokens. Although this difference occurs due to an external ARDM transfer to the contract in the form of rewards, share calculations for deposits made after the transfer will be calculated according to the new rate. This leads to a situation where any user who deposits ARDM tokens after the rewards transfer may suffer losses after the owner requests a rewards reset."
+  },
+  {
+    "title": "Front-Running Attack; Inflation Attack",
+    "audit": "Diverse",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 190,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Integer Overflow",
+    "vulnerable_functions": ["XARDMStaking.sol::deposit()"],
+    "lines": "76-94",
+    "description": "The vulnerability is related to a rounding issue in the deposit() function, as illustrated by the following equation: uint256 mintAmount = (_amount • totalxARDM) / totalARDM; An attacker can manipulate the denominator and cause the victim to receive zero or a portion of the vault."
+  },
+  {
+    "title": "Highly Permissive Role Access",
+    "audit": "Diverse",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["XARDMStaking.sol::deposit()"],
+    "lines": "76-94",
+    "description": "The owner of the XARDMStaking contract can change the penalty deadline and penalty fee values after users have deposited ARDM tokens based on the previous penalty values. Changing the penalty and fine deadline will affect users who have stakes in the system and will make them pay different fines than promised."
+  },
+  {
+    "title": "Arithmetic",
+    "audit": "DeedzCoin",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Arithmetic Error",
+    "vulnerable_functions": ["DeedzCoin.sol::_transferSupplierRole();"],
+    "lines": "207-217",
+    "description": "The _transferSupplierRole() function in the provided code snippet has an unwanted balance allocation order, resulting in a critical failure. The balance of the old Provider is transferred to the new Provider, but immediately afterward, the new balance of the new Provider is overwritten by an arithmetic operation. Specifically, the function mistakenly sets the balance of the newProvider to safeAdd(balanceOf(oldSupplier)"
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "LitLab",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 285,
+    "vulnerability_class": "Authorization",
+    "vulnerability_subclass": "Improper Check",
+    "vulnerable_functions": ["LITTAdvisorsTeam.sol::setListingDate()"],
+    "lines": "47",
+    "description": "The listingDate function should only be callable once, but this check is not implemented. This allows it to be called multiple times and modified, which could enable undesired future transfers to other addresses."
+  },
+  {
+    "title": "Invalid Calculations",
+    "audit": "LitLab",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 640,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "State Update Error",
+    "vulnerable_functions": [
+      "LitlabPreStakingBox.sol::withdrawRewards() withdraw()"
+    ],
+    "lines": "100",
+    "description": "The withdraw function removes the staked tokens and, if certain conditions are met, also removes the rewards. The withdrawRewards function only claims the rewards. The issue here is that withdrawRewards() does not update the value of PendingRewards. If withdrawRewards is used before withdraw, the totalRewards value will not be accurately updated to reflect the changed PendingRewards value, potentially leading to claiming more than intended."
+  },
+  {
+    "title": "Mishandled Edge Case; Data Consistency",
+    "audit": "ForeProtocol",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 287,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Validation Logic Error",
+    "vulnerable_functions": [
+      "ForeVerifiers.sol::isApprovedForAll(),_transfer()"
+    ],
+    "lines": "",
+    "description": "The fore operator holds overriding control on the verification NFTs (vNFTs), which creates a centralized point of vulnerability. If the owner's private keys are compromised, an attacker can take over any vNFT, potentially devaluing them and extracting tokens. A vulnerability arises from the isApprovedForAll and _transfer() functions, which always approve an action if it originates from a foreOperator. With the setFactoryStatus function, there is a risk of introducing an erroneous address as a whitelisted factory or, if the owner's keys are compromised, a malicious address."
+  },
+  {
+    "title": "Requirements Violation",
+    "audit": "ForeProtocol",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 285,
+    "vulnerability_class": "Authorization",
+    "vulnerability_subclass": "Privilege Misuse",
+    "vulnerable_functions": ["ProtocolConfig.sol::"],
+    "lines": "",
+    "description": "Although it is stated that the highGuard address is a bunch of NFT holders, there is no such implementation in the contract. The flexibility of the high guard address allows the system owner to specify any entity, without the requirement for it to be a multi-sig wallet configuration or limited solely to NFT holders."
+  },
+  {
+    "title": "Requirement Violation; Data Consistency",
+    "audit": "ForeProtocol",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 754,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Check",
+    "vulnerable_functions": ["ProtocolConfig.sol::editTier()"],
+    "lines": "",
+    "description": "The editTier function lacks comprehensive checks to maintain the ordered and hierarchical structure of minVerifications and multipliers across tiers, potentially allowing for inconsistent tier configurations.There is a possibility of setting minVerifications for a tier to a value greater than its subsequent tier or lesser than its previous tier, leading to inconsistency in tier structuring"
+  },
+  {
+    "title": "Coarse-Grained Authorization Model",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Authorization",
+    "vulnerability_subclass": "Access Control Issue",
+    "vulnerable_functions": ["CyberTitansGame.sol::changeWallets()"],
+    "lines": "56-60",
+    "description": "The function changeWallets() in both CyberTitansGames.sol and CyberTitansTournament.sol sets three critical state variables at once, which can lead to dangerous situations. A project should have a fine-grained access control system if it has multiple layers of auth-related functionality. In this case, the variable wallet is the company wallet receiving the fees; the manager has a critical access control role; and litlabToken corresponds to the token. Additionally, this design is not efficient in terms of Gas expense, since three storage variables must be accessed every time, even if only one of them has to be set. The code should not contain undocumented functionality."
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 642,
+    "vulnerability_class": "State Management",
+    "vulnerability_subclass": "Incorrect State Update",
+    "vulnerable_functions": ["LITTAdvisorsTeam.sol::removeAdvisor()"],
+    "lines": "57-59",
+    "description": "In the removeAdvisor() function, the removal of the advisor's vesting is done incorrectly. The advisor vesting amount should not be reset to the default value of 0 by using delete advisors[_wallet];, but should be updated to the amount that the advisor has already claimed, taken from advisorsWithdrawn[_wallet]. This is needed to prevent data consistency issues and to correctly track data with the getAdvisorData() view function, and to prevent underflow in the advisorsWithdrawn[msg.sender] > 0, 'NotAllowed')."
+  },
+  {
+    "title": "Highly Permissive Role Access",
+    "audit": "Diverse",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Authorization",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["XARDMStaking.sol::resetRewards()"],
+    "lines": "122-134",
+    "description": "The owner of the XARDMS Taking contract can withdraw ARDM tokens deposited by users using the resetRewards() function. When the total ARDM balance in the XARDMS take contract is greater than the total supply of xARDM, the owner can withdraw this difference as ARDM tokens. Although this difference occurs due to an external ARDM transfer to the contract in the form of rewards, share calculations for deposits made after the transfer will be calculated according to the new rate. This leads to a situation where any user who deposits ARDM tokens after the rewards transfer may suffer losses after the owner requests a rewards reset."
+  },
+  {
+    "title": "Unverifiable Logic",
+    "audit": "Neptune",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 1283,
+    "vulnerability_class": "Security",
+    "vulnerability_subclass": "Unverifiable External Dependencies",
+    "vulnerable_functions": [
+      "LiquidityGaugePoolReward.sol:: LiquidityGaugePool.sol"
+    ],
+    "lines": "",
+    "description": "LiquidityGaugePoolReward contracts _updateVotingPowers function manages the voting power of each user and it relies on the VoteEscrowToken, VoteEscrowBooster and TokenRecovery contracts. However, they are out-of-scope and their implementation and safety cannot be verified. GaugeControllerRegistry contract is the registry address in the system and is responsible for setting the epochs, but it is out of scope."
+  },
+  {
+    "title": "Mishandled Edge Case",
+    "audit": "Neptune",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 0,
+    "vulnerability_class": "Denial of Service",
+    "vulnerability_subclass": "Data inconsistency",
+    "vulnerable_functions": [
+      "LiquidityGaugePool.sol:: deposit(), withdraw(),exit()"
+    ],
+    "lines": "",
+    "description": "The deposit function in the contract updates the _lastDepositHeights for a user every time they deposit tokens. This mechanism unintentionally extends the withdrawal lockup period for users who make consecutive deposits. Users who want to top up their deposits or make regular contributions can inadvertently extend their lockup period. This could lead to a scenario where users might not be able to access their funds when needed, especially if they are unaware of this behavior."
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "WarpedGames",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 672,
+    "vulnerability_class": "Data Consistency",
+    "vulnerability_subclass": "State Management",
+    "vulnerable_functions": ["WarpedPoolManager.sol:: _exchangePools"],
+    "lines": "",
+    "description": "The primary pool address may be removed from the _exchangePools and be not updated in the primaryPool variable. This will result in inconsistent contract state"
+  },
+  {
+    "title": "Unsafe Approval",
+    "audit": "Dexalot",
+    "reported_impact": "high",
+    "reported_likelihood": "high",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best practices",
+    "vulnerability_subclass": "Unsafe Approval",
+    "vulnerable_functions": ["MainnetRFQ::_executeSwap()"],
+    "lines": "275, 283",
+    "description": "The contract MainnetRFQ uses the approve() function inside of the _executeSwap(), which does not update the allowance, but replaces it. This creates a problem when a taker, which is a smart-contract, makes several swaps, and does not withdraw the previous approval"
+  },
+  {
+    "title": "EIP Standard Violation: Missing Value Check",
+    "audit": "Dexalot",
+    "reported_impact": "high",
+    "reported_likelihood": "low",
+    "cwe_classification": 347,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Improper verification of signature",
+    "vulnerable_functions": ["MainnetRFQ::_recoverSigner()"],
+    "lines": "165-189",
+    "description": "According to the EIP-1271 implementation, the s value in the signature verification process should be checked against an upper value. The function _recoverSigner() does not implement an upper bound check for the variable s."
+  },
+  {
+    "title": "Missing Array Length Check",
+    "audit": "Dexalot",
+    "reported_impact": "low",
+    "reported_likelihood": "medium",
+    "cwe_classification": 129,
+    "vulnerability_class": "validation",
+    "vulnerability_subclass": "Improper Validation of array index",
+    "vulnerable_functions": ["MainnetRFQ::batchClaimBalance()"],
+    "lines": "279-296",
+    "description": "The function batchClaimBalance() lacks the array length equality checks, which will lead to unexpected behavior if the length of arrays is different."
+  },
+  {
+    "title": "Reusable msg.value Allows Multiple Lot Creation with Single Payment",
+    "audit": "Eesee",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Validation",
+    "vulnerable_functions": [
+      "Eesee::createLots()",
+      "Eesee::createLotsAndBuyTickets()"
+    ],
+    "lines": "102-123, 169-178, ",
+    "description": "The multicall function does not account for the cumulative msg.value when processing multiple delegate calls to the createLots function."
+  },
+  {
+    "title": "Inadequate msg.value Validation in createLots() Allows Multiple Lot Creation with Single Payment",
+    "audit": "Eesee",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Validation",
+    "vulnerable_functions": ["Eesee::createLots()"],
+    "lines": "102-123",
+    "description": "The createLots function iterates over an array of assets and corresponding params, creating lots based on these inputs. During this process, the function checks if msg.value is equal to the asset.amount for each iteration. Since msg.value remains constant throughout a transaction, this check should be cumulative to prevent the same msg.value from being counted multiple times"
+  },
+  {
+    "title": "Premature Asset Claim in receiveAssets() Function due to Missing Closure Check",
+    "audit": "Eesee",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Validation",
+    "vulnerable_functions": ["Eesee::receiveAssets()"],
+    "lines": "187-229",
+    "description": "The receiveAssets function of the Eesee smart contract exhibits a logical flaw where it lacks the necessary validation to ensure that a lot is fully closed (i.e., all tickets were sold) before allowing assets to be claimed."
+  },
+  {
+    "title": "Unprotected Funds Withdrawal",
+    "audit": "SnackClub",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Unprotected Funds Withdrawal",
+    "vulnerable_functions": ["SnackclubTournamentsPayout::withdraw"],
+    "lines": "45-50",
+    "description": "Any account may withdraw the funds handled by the SnackclubTournamentsPayout contract by invoking the withdraw() function."
+  },
+  {
+    "title": "Overwritten Rewards",
+    "audit": "SnackClub",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Unprotected Funds Withdrawal",
+    "vulnerable_functions": [
+      "RewardControl::storeReward",
+      "RewardControl::storeRewards"
+    ],
+    "lines": "28-37, 45-51",
+    "description": "An admin or operator may overwrite a reward with a new one by invoking the RewardControl.storeReward() or RewardControl.storeRewards() functions passing the same receiver and secret used in a previous reward. This may be used to replace a reward with another one with 0 amount, effectively removing it."
+  },
+  {
+    "title": "Unverified Interaction",
+    "audit": "DeXe",
+    "reported_impact": "Critical",
+    "reported_likelihood": "Critical",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Validation",
+    "vulnerable_functions": ["TraderPoolRiskyProposal::invest()"],
+    "lines": "116-175",
+    "description": "It is possible for a trader to implement and provide a token with the possibility to change decimals at any period in time. As the DeXe system relies on decimals during price calculation, internal logic may be corrupted"
+  },
+  {
+    "title": "Requirements Violation",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 841,
+    "vulnerability_class": "Logic Flaw",
+    "vulnerability_subclass": "Improper Enforcement of Behavioral Workflow",
+    "vulnerable_functions": ["TraderPoolRiskyProposalr::create()"],
+    "lines": "67-114",
+    "description": "In a risky pool, traders can trade any token, even those created by them, and add liquidity to Uniswap. This allows the trader to always be in profit by selling their tokens at a Higher price, and closing DeXe trades at a loss."
+  },
+  {
+    "title": "Highly Permissive Role Access",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": [
+      "CoreProperties::setDEXECommissionPercentages()",
+      "CoreProperties::setTraderCommissionPercentages()"
+    ],
+    "lines": "90-100, 102-108",
+    "description": "The owner of the contract could change commissions at any period of time. The upper bound limit for the commission is not set up. This may lead to the manipulation of fees."
+  },
+  {
+    "title": "Highly Permissive Role Access",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["ERC20Sale::burn()"],
+    "lines": "49-51",
+    "description": "The owner of the contract may burn any user funds"
+  },
+  {
+    "title": "Highly Permissive Role Access",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["GovValidators::changeBalances()"],
+    "lines": "135-140",
+    "description": "The owner of the contract may change validators at any moment"
+  },
+  {
+    "title": "Highly Permissive Role Access",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["Insurance::setDependencies()"],
+    "lines": "47-52",
+    "description": "The injector is able to change the DeXe token address on the contract. This may lead to users being unable to withdraw their deposits and the injector may take control over the insurance pool."
+  },
+  {
+    "title": "Access Control Violation; Race Conditions",
+    "audit": "DeXe",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Authorization",
+    "vulnerable_functions": [
+      "CoreProperties::setDependencies()",
+      "PriceFeed::setDependencies()",
+      "GovPool::setDependencies()",
+      "Insurance::setDependencies()",
+      "BasicTraderPool::setDependencies()",
+      "InvestTraderPool::setDependencies()",
+      "TraderPool::setDependencies()",
+      "TraderPoolProposal::setDependencies()"
+    ],
+    "lines": "39-45, 46-53, 134-139, 47-52, 43-47, 46-50, 100-107, 96-100",
+    "description": "Since, for the first time, the setter functions could be called by anyone, there is a risk of race conditions that may result in the inconsistent state of the contract. This may lead to access to critical state variables by an unauthorized user."
+  },
+  {
+    "title": "Contradiction - Denial of Service",
+    "audit": "DeXe",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 691,
+    "vulnerability_class": "Denial of Service",
+    "vulnerability_subclass": "Insufficient Control Flow Management",
+    "vulnerable_functions": ["GovValidators::onlyValidator()"],
+    "lines": "43-46",
+    "description": "The onlyValidator modifier uses current user balances to identify validators. However, voting is only possible for those who have balances at the moment of proposal creation. This may lead to an inability to reach a quorum on proposals due to some validators not passing the modifier."
+  },
+  {
+    "title": "Unrestricted Authority to Alter Vesting Beneficiary Addresses",
+    "audit": "Farcana",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["FarcanaVesting.sol::changeBeneficiaryAddress();"],
+    "lines": "190-198",
+    "description": "The TokenVesting contract includes a function changeBeneficiaryAddress, which allows the contract owner to alter the beneficiary address of any vesting schedule. This function grants the owner unchecked power to transfer the claim rights of vested tokens from one address to another at any point, without any constraints or oversight mechanisms.The DeedzCoin smart contract introduces a public mapping named balances to store the balance of tokens for each address. This is redundant as the contract inherits from the ERC20 contract, which already provides a function named balanceOf() to retrieve an address's balance and maintains a private mapping _balances to store token balances for addresses. Moreover, the contract does not override or update the functions (transfer, transferFrom) from the ERC20, which means, when those functions are called, only the _balances mapping from the ERC20 will be updated, and not the balances mapping of the DeedzCoin contract. This could lead to major inconsistencies in the token balance data"
+  },
+  {
+    "title": "Mishandled Edge Case; Data Consistency",
+    "audit": "ForeProtocol",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 0,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Validation",
+    "vulnerable_functions": ["MarketLib.sol::_isVerified()"],
+    "lines": "75-77",
+    "description": "In the prediction market verification system, the market is considered `verified` if the verified amount of the major side is equal to the total amount of the minor side. This method can be easily manipulated, especially when there is a significant difference between the sides. It can lead to a loss of confidence in the fairness of the prediction market, economic misalignment, and the potential for manipulation."
+  },
+  {
+    "title": "Denial of Service Vulnerability; Invalid Calculations",
+    "audit": "ForeProtocol",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 682,
+    "vulnerability_class": "Arithmetic",
+    "vulnerability_subclass": "Incorrect Calculation",
+    "vulnerable_functions": ["BasicMarket.sol::withdrawVerificationReward()"],
+    "lines": "305-366",
+    "description": "In cases where a verifier votes for the wrong side and is therefore eligible for a penalty, the function designed to calculate the amounts of toDisputeCreator and toHighGuard incorrectly uses the multipliedPowerOf  function instead of the powerOf function to calculate the amounts to transfer. This discrepancy becomes pronounced in scenarios where the NFT ID multiplier exceeds 100%. This difference can cause a denial of service (DoS) on the line: foreVerifiers.marketBurn(power • toDisputeCreator • toHighGuard)."
+  },
+  {
+    "title": "Coarse-Grained Access Control",
+    "audit": "ForeProtocol",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 285,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Authorization",
+    "vulnerable_functions": [
+      "ForeVerifiers.sol::isApprovedForAll(),_transfer()"
+    ],
+    "lines": "",
+    "description": "The project's design gives sole privilege to the highGuard address to resolve disputes. While the protocolConfig contract's owner can change the highGuard, the exclusive reliance on a single address poses significant security risks. If control over the highGuard private key is compromised, an attacker could manipulate prediction market results for their advantage. An attacker with control over the highGuard address could unilaterally resolve disputes in their favor, potentially manipulating market outcomes and compromising the integrity of the entire system"
+  },
+  {
+    "title": "Requirement Violation",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 703,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Missing Validation",
+    "vulnerable_functions": ["LitlabPreStakingBox.sol::stake()"],
+    "lines": "57-83",
+    "description": "The function stake() should be called after the deployment of the contract only once. However, there is no check that makes sure that this is the case.Additionally, the stake() function can be called after the end of staking date, which leads to the fact that rewards can be received instantly."
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 824,
+    "vulnerability_class": "State Management",
+    "vulnerability_subclass": "Invalid State",
+    "vulnerable_functions": ["CyberTitansTournament.sol::finalizeTournament()"],
+    "lines": "177-224",
+    "description": "In the finalizeTournament() function, there is no check to prevent finalizing an already finalized tournament. This can lead to a situation where rewards are being paid multiple times for the same tournament"
+  },
+  {
+    "title": "Requirements Violation",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 285,
+    "vulnerability_class": "Validation",
+    "vulnerability_subclass": "Input Validation Error",
+    "vulnerable_functions": ["LITTVestingContract.sol::_executeVesting()"],
+    "lines": "151-171",
+    "description": "In the _executeVesting() function, there is an invalid validation that prevents users from claiming TGE tokens before the cliff time. require(block.timestamp >= listing_date + (data._cliffMonths * 30 days), 'TooEarly'); This leads to a situation where the TGE tokens will not be claimable at the listing date."
+  },
+  {
+    "title": "Data Consistency",
+    "audit": "LitLab",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 670,
+    "vulnerability_class": "State Management",
+    "vulnerability_subclass": "Invalid State",
+    "vulnerable_functions": ["LitlabPreStakingBox.sol::withdraw()"],
+    "lines": "",
+    "description": "During the withdrawInitial() function execution data used in rewards calculation is not updated. Resulting in a situation where users who did not withdraw their TGE tokens are rewarded equally as those who had withdrawn."
+  },
+  {
+    "title": "Missing Events for Critical Value Update",
+    "audit": "LitLab",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 352,
+    "vulnerability_class": "Event Emission",
+    "vulnerability_subclass": "Missing Critical Events",
+    "vulnerable_functions": [
+      "CyberTitansGame.sol::CyberTitansTournament.sol::LitlabPreStakingBox.sol::LITTAdvisorsTeam.sol"
+    ],
+    "lines": "",
+    "description": "The following functions do not emit relevant events after executing the sensitive actions of setting the fundingRate, updateTime and proposalTime, and transferring the rewards."
+  },
+  {
+    "title": "Coarse-grained Access Control; Data Inconsistency",
+    "audit": "Neptune",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["LiquidityGaugePoolController.sol::setPool()"],
+    "lines": "45-47",
+    "description": "The setPool function in the LiquidityGaugePool contract grants entities with the DEFAULT_ADMIN_ROLE extensive power to modify vital parameters of the _poolInfo struct, including but not limited to stakingToken, veToken, and rewardToken. Unrestricted modifications can potentially lead to unauthorized alterations at any moment, posing severe risks like asset freezing, economic imbalances, and unintended reward manipulations. Furthermore, during the initialization of the LiquidityGaugePool.sol contract, the _setPool function gets invoked for the first time without adequately checking its input values for invalid or default data. Given the importance of these variables to the contract's functionality, uninitialized or default values might introduce unpredictability and erratic behavior. "
+  },
+  {
+    "title": "Denial Of Service; Highly Permissive Owner Access",
+    "audit": "Neptune",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": [
+      "LiquidityGaugePoolController.sol::setPool(), : _withdrawRewards()"
+    ],
+    "lines": "",
+    "description": "The current implementation of the platform fee lacks constraints, permitting it to be set to any value, including values exceeding 100%. This oversight poses a critical risk as fees exceeding 100% would lead to a scenario where the system locks users' tokens. This will result in reversion with PlatformFeeTooHighError error and cause Denial of Service. Such lockups occur because the withdraw function will inevitably fail due to insufficient balances, causing the contract to be unable to return more than what users initially deposited"
+  },
+  {
+    "title": "Highly Permissive Owner Access",
+    "audit": "Neptune",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["LiquidityGaugePool.sol::setPool()"],
+    "lines": "45-47",
+    "description": "Entities with DEFAULT_ADMIN_ROLE permissions can modify crucial variables, such as stakingToken and rewardToken, even after users have made deposits into the pool.If the stakingToken is changed after deposits, users might become unable to withdraw their original staked assets. Changing the rewardToken might result in users receiving rewards in a token they did not anticipate or desire, potentially altering the economic value of their rewards."
+  },
+  {
+    "title": "Highly Permissive Owner Access",
+    "audit": "Neptune",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excesive Pivilege",
+    "vulnerable_functions": ["LiquidityGaugePool.sol:setPool()"],
+    "lines": "45-47",
+    "description": "Entities possessing DEFAULT_ADMIN_ROLE permissions can change the lockupPeriodInBlocks, potentially trapping user funds by extending the withdrawal lockup period unexpectedly. An extension of lockupPeriodInBlocks could lead to users' funds being inaccessible for longer than anticipated, disrupting their financial plans. Users may lose trust in the platform due to unpredictable changes in withdrawal timelines."
+  },
+  {
+    "title": "Unrestricted Token Recovery",
+    "audit": "Neptune",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 285,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excesive Pivilege",
+    "vulnerable_functions": ["LiquidityGaugePool.sol:recoverToken())"],
+    "lines": "45-47",
+    "description": "The Medium recoverToken function grants entities with the _NS_ROLES_RECOVERY_AGENT role the power to withdraw any token from the contract. This includes critical tokens such as staking and reward tokens. Entities with the _NS_ROLES_RECOVERY_AGENT role could potentially misuse this function to siphon off staking or reward tokens. This may result in financial losses for users and erode trust in the platform."
+  },
+  {
+    "title": "Race Condition",
+    "audit": "Neptune",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Low",
+    "cwe_classification": 362,
+    "vulnerability_class": "Denial of Serive",
+    "vulnerability_subclass": "Race Condition",
+    "vulnerable_functions": [
+      "LiquidityGaugePool.sol:: withdrawRewards(),exit()"
+    ],
+    "lines": "",
+    "description": "The _withdrawRewards function calculates the platformFee based on the current state of the _poolInfo.platformFee variable. Given the dynamic nature of blockchain states, it is possible that the platformFee variable could be changed by an admin between when a user initiates a transaction and when it gets mined, leading to unexpected fee deductions. A user intending to withdraw their rewards may be subjected to a different platform fee than anticipated. This can result in unexpected deductions, which could erode user trust in the system and lead to potential financial loss for the user."
+  },
+  {
+    "title": "Highly Permissive Owner Access",
+    "audit": "Neptune",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 285,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Excesive Pivilege",
+    "vulnerable_functions": [
+      "LiquidityGaugePool.sol:: withdrawRewards(),exit(), withdraw() "
+    ],
+    "lines": "",
+    "description": "The LiquidityGaugePool contract's pause functionality impacts not only deposits but also withdrawals, including both token withdrawals and reward withdrawals. Pausing withdrawals, especially in emergencies or uncertain situations, can raise panic and mistrust among users. It denies users access to their staked assets and earned rewards, potentially causing financial and reputational damage to the platform. "
+  },
+  {
+    "title": "Lack of Emergency Withdrawal Mechanism",
+    "audit": "Neptune",
+    "reported_impact": "Medium",
+    "reported_likelihood": "High",
+    "cwe_classification": 0,
+    "vulnerability_class": "Best Practices",
+    "vulnerability_subclass": "Insufficient Control Flow Management",
+    "vulnerable_functions": ["LiquidityGaugePool.sol: "],
+    "lines": "",
+    "description": "The LiquidityGaugePool contract does not feature a mechanism for emergency withdrawals, excluding rewards. Users may be left unable to access their assets if issues arise with reward calculation. In the event of failures or unforeseen issues with the reward calculation (part of rewards calculation logic is in out-of-scope contracts), users would be unable to withdraw their primary deposited assets. This situation can lead to panic, potential financial losses for users, and erode trust in the platform."
+  },
+  {
+    "title": "Unauthorized Access",
+    "audit": "virtuswap",
+    "reported_impact": "low",
+    "reported_likelihood": "low",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access control",
+    "vulnerability_subclass": "Authorization",
+    "vulnerable_functions": ["vVestingWallet::release()"],
+    "lines": "81",
+    "description": "The release() function can be called by anyone, allowing external users to release tokens on behalf of the beneficiary."
+  },
+  {
+    "title": "Requirements Violation; Race Condition",
+    "audit": "Diverse",
+    "reported_impact": "High",
+    "reported_likelihood": "High",
+    "cwe_classification": 367,
+    "vulnerability_class": "Denial of Serive",
+    "vulnerability_subclass": "Race Condition",
+    "vulnerable_functions": ["XARDMStaking.sol::deposit(), withdraw()"],
+    "lines": "",
+    "description": "User deadlines are not modified when they make a deposit, as long as the deadline to pay the penalty has not yet arrived, and new deposits made are recorded to be processed with the same deadline. Users can wait until the last stage of the deadline by depositing a very small amount of tokens and then deposit the desired amount at the last minute to collect their rewards a few minutes later."
+  },
+  {
+    "title": "Highly Permissive Role Access",
+    "audit": "Diverse",
+    "reported_impact": "Medium",
+    "reported_likelihood": "High",
+    "cwe_classification": 284,
+    "vulnerability_class": "Authorization",
+    "vulnerability_subclass": "Excessive Privilege",
+    "vulnerable_functions": ["XARDMStaking.sol::pause(), unpause()"],
+    "lines": "",
+    "description": "Highly Permissive Role Access Account with PAUSER_ROLE can pause the transferability of the XARDM token. This leads to a situation where the deposit() and withdrawal() functions of the XARDMStaking contract are affected by a denial of service vulnerability. As both systems are closely connected and there is functionality to pause deposits and withdrawals directly in XARDMStaking, the pausable nature of the XARDM token seems redundant."
+  },
+  {
+    "title": "Denial of Service Vulnerability",
+    "audit": "ForeProtocol",
+    "reported_impact": "Critical",
+    "reported_likelihood": "High",
+    "cwe_classification": 400,
+    "vulnerability_class": "Denial of Service",
+    "vulnerability_subclass": "Unauthorized or Excessive Resource Claim",
+    "vulnerable_functions": ["BasicMarket.sol::withdrawVerificationReward()"],
+    "lines": "305-366",
+    "description": "The withdrawVerificationReward function tries to execute transfers and burns using the foreVerifiers contract's tokens, but the foreVerifiers contract lacks the ability to grant allowances, resulting in denial-of-service (DoS) vulnerabilities. Key platform functionalities can become paralyzed due to this oversight, leading to operational disruptions."
+  },
+  {
+    "title": "Fixed Fee Calculation in EeseeRaribleRouter Incompatible with Rarible's Dynamic Fee Structure",
+    "audit": "Eesee",
+    "reported_impact": "Medium",
+    "reported_likelihood": "High",
+    "cwe_classification": 573,
+    "vulnerability_class": "Logic Flaw",
+    "vulnerability_subclass": "Improper Following of Specification by Caller",
+    "vulnerable_functions": ["EeseeRaribleRouter::purchaseAsset()"],
+    "lines": "36-62",
+    "description": "The function purchaseAsset is designed to interact with the Rarible marketplace for buying NFTs. However, this fixed fee calculation is incompatible with Rarible's dynamic fee structure"
+  },
+  {
+    "title": "Front-Running and Indiscriminate Lock-Up Extensions Due to Untracked Deposit Durations in Staking Contract",
+    "audit": "Eesee",
+    "reported_impact": "High",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 284,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Logic Flaw",
+    "vulnerable_functions": [
+      "EeseeStaking::deposit()",
+      "EeseeStaking::changeDuration()"
+    ],
+    "lines": "86-120, 326-330",
+    "description": "There are no safeguards in place to prevent the admin from changing the duration while deposit transactions are pending, which can lead to unexpected lock-up times for users."
+  },
+  {
+    "title": "Zero Reward Rate Setting in updateRewardRates() Function Can Nullify Staking Yields",
+    "audit": "Eesee",
+    "reported_impact": "High",
+    "reported_likelihood": "Low",
+    "cwe_classification": 20,
+    "vulnerability_class": "Logic Flaw",
+    "vulnerability_subclass": "Improper Input Validation",
+    "vulnerable_functions": ["EeseeStaking::updateRewardRates()"],
+    "lines": "291-319",
+    "description": "Although the function validates the length of the arrays and the progression of rates, it does not prevent setting a rate to zero, which can halt the reward accumulation process. "
+  },
+
+  {
+    "title": "Immutable callbackGasLimit in Chainlink VRF Consumer Restricts Adaptability to Gas Fluctuations",
+    "audit": "Eesee",
+    "reported_impact": "High",
+    "reported_likelihood": "Low",
+    "cwe_classification": 410,
+    "vulnerability_class": "Gas Usage",
+    "vulnerability_subclass": "Insufficient Resource Pool",
+    "vulnerable_functions": ["EeseeRandom::callbackGasLimit"],
+    "lines": "35",
+    "description": "The immutable private variable callbackGasLimit that sets the Gas limit for Chainlink VRF callbacks restricts the contract ability to adapt to fluctuating Gas prices on the Ethereum network."
+  },
+  {
+    "title": "Immutable Payee Information in EeseeFeeSplitter Contract May Lead to Funds Misallocation",
+    "audit": "Eesee",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Low",
+    "cwe_classification": 640,
+    "vulnerability_class": "Access Control",
+    "vulnerability_subclass": "Logic Flaw",
+    "vulnerable_functions": ["EeseeFeeSplitter::callbackGasLimit"],
+    "lines": "13-81",
+    "description": "the contract lacks the functionality to update payee information post-deployment. This immutability can lead to a scenario where funds become locked or misallocated due to changes in business structure or payee addresses"
+  },
+  {
+    "title": "Absence of Pausable Mechanisms in Eesee Contracts Risks Uncontrolled Exposure to External Vulnerabilities",
+    "audit": "Eesee",
+    "reported_impact": "Low",
+    "reported_likelihood": "Medium",
+    "cwe_classification": 703,
+    "vulnerability_class": "Logic Flaw",
+    "vulnerability_subclass": "Improper Check or Handling of Exceptional Conditions",
+    "vulnerable_functions": [
+      "EeseeOpenseaRouter::*",
+      "EeseeRaribleRouter::*",
+      "EeseePeriphery::*",
+      "EeseeSwap::*"
+    ],
+    "lines": "12-85, 11-62, 10-244, 7-117",
+    "description": "The Eesee ecosystem lacks emergency halting mechanisms or circuit breakers. In the absence of such controls, the inability to pause operations in response to detected vulnerabilities or external protocol upgrades can lead to exploitation"
+  },
+  {
+    "title": "Potential Front-Run with changeFee() for Eesee.sol and EeseeDrops.sol",
+    "audit": "Eesee",
+    "reported_impact": "Medium",
+    "reported_likelihood": "Low",
+    "cwe_classification": 362,
+    "vulnerability_class": "Logic Flaw",
+    "vulnerability_subclass": "Race Condition",
+    "vulnerable_functions": ["Eesee::changeFee()", "EeseeDrops::changeFee()"],
+    "lines": " 637, 216",
+    "description": "If an admin transaction that calls changeFee is included in a block before a user transaction that calls listDrop or createLots, the user could end up paying a different fee than expected. "
+  }
+]

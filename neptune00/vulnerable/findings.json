@@ -1,0 +1,175 @@
+{
+  "description": {
+    "project_name": "Neptune Finance",
+    "compiler_versions": ["0.8.12"]
+  },
+  "findings": [
+    {
+      "title": "Coarse-grained Access Control; Data Inconsistency",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["LiquidityGaugePoolController::_setPool()"],
+      "lines": "18-68",
+      "description": "The setPool function in the LiquidityGaugePool contract grants entities with the DEFAULT_ADMIN_ROLE extensive power to modify vital parameters of the _poolInfo struct, including but not limited to stakingToken, veToken, and rewardToken. Unrestricted modifications can potentially lead to unauthorized alterations at any moment, posing severe risks like asset freezing, economic imbalances, and unintended reward manipulations. Furthermore, during the initialization of the LiquidityGaugePool contract, the _setPool function gets invoked for the first time without adequately checking its input values for invalid or default data. Given the importance of these variables to the contract's functionality, uninitialized or default values might introduce unpredictability and erratic behavior. "
+    },
+    {
+      "title": "Unverifiable Logic",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 1283,
+      "vulnerability_class": "Security",
+      "vulnerability_subclass": "Unverifiable External Dependencies",
+      "vulnerable_functions": [
+        "LiquidityGaugePoolReward::",
+        "LiquidityGaugePool::"
+      ],
+      "lines": "",
+      "description": "LiquidityGaugePoolReward contracts _updateVotingPowers function manages the voting power of each user and it relies on the VoteEscrowToken, VoteEscrowBooster and TokenRecovery contracts. However, they are out-of-scope and their implementation and safety cannot be verified. GaugeControllerRegistry contract is the registry address in the system and is responsible for setting the epochs, but it is out of scope."
+    },
+    {
+      "title": "Denial Of Service; Highly Permissive Owner Access",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excesive Pivilege",
+      "vulnerable_functions": [
+        "LiquidityGaugePool::setPool()",
+        "LiquidityGaugePool::_withdrawRewards()"
+      ],
+      "lines": "45-47, 113-135",
+      "description": "The current implementation of the platform fee lacks constraints, permitting it to be set to any value, including values exceeding 100%. This oversight poses a critical risk as fees exceeding 100% would lead to a scenario where the system locks users' tokens. This will result in reversion with PlatformFeeTooHighError error and cause Denial of Service. Such lockups occur because the withdraw function will inevitably fail due to insufficient balances, causing the contract to be unable to return more than what users initially deposited"
+    },
+
+    {
+      "title": "Undocumented Functionality",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["LiquidityGaugePoolController::_setPool()"],
+      "lines": "18-68",
+      "description": "The DEFAULT_ADMIN_ROLE can alter vital parameters such as platformFee, veBoostRatio, veToken, registry address, key, name, and info. The implications and necessity of these changes are not documented, leading to potential unintended consequences. Adjustments to these settings can disrupt the normal operations of the platform. Changes, especially to parameters like veBoostRatio and veToken, can affect the rewards of the users. The platform fee mechanism, a crucial part of user interactions with the platform, remains unmentioned in the provided documentation."
+    },
+    {
+      "title": "Missing Storage Gaps",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 1283,
+      "vulnerability_class": "Upgradability",
+      "vulnerability_subclass": "Storage Extension",
+      "vulnerable_functions": [
+        "LiquidityGaugePoolController::",
+        "LiquidityGaugePoolState::",
+        "LiquidityGaugePoolReward::",
+        "TokenRecovery::",
+        "WithPausability::"
+      ],
+      "lines": "",
+      "description": "When working with upgradeable contracts, it is necessary to introduce storage gaps to allow for storage extension during upgrades. Storage gaps are a convention for reserving storage slots in a base contract, allowing future versions of that contract to use up those slots without affecting the storage layout of child contracts."
+    },
+    {
+      "title": "Highly Permissive Owner Access",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excesive Pivilege",
+      "vulnerable_functions": ["LiquidityGaugePool::setPool()"],
+      "lines": "45-47",
+      "description": "Entities with DEFAULT_ADMIN_ROLE permissions can modify crucial variables, such as stakingToken and rewardToken, even after users have made deposits into the pool.If the stakingToken is changed after deposits, users might become unable to withdraw their original staked assets. Changing the rewardToken might result in users receiving rewards in a token they did not anticipate or desire, potentially altering the economic value of their rewards."
+    },
+    {
+      "title": "Mishandled Edge Case",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 0,
+      "vulnerability_class": "Denial of Service",
+      "vulnerability_subclass": "Data inconsistency",
+      "vulnerable_functions": [
+        "LiquidityGaugePool::deposit()",
+        "LiquidityGaugePool::withdraw()",
+        "LiquidityGaugePool::exit()"
+      ],
+      "lines": "67-85, 87-107, 140-143",
+      "description": "The deposit function in the contract updates the _lastDepositHeights for a user every time they deposit tokens. This mechanism unintentionally extends the withdrawal lockup period for users who make consecutive deposits. Users who want to top up their deposits or make regular contributions can inadvertently extend their lockup period. This could lead to a scenario where users might not be able to access their funds when needed, especially if they are unaware of this behavior."
+    },
+    {
+      "title": "Highly Permissive Owner Access",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excesive Pivilege",
+      "vulnerable_functions": ["LiquidityGaugePool:setPool()"],
+      "lines": "45-47",
+      "description": "Entities possessing DEFAULT_ADMIN_ROLE permissions can change the lockupPeriodInBlocks, potentially trapping user funds by extending the withdrawal lockup period unexpectedly. An extension of lockupPeriodInBlocks could lead to users' funds being inaccessible for longer than anticipated, disrupting their financial plans. Users may lose trust in the platform due to unpredictable changes in withdrawal timelines."
+    },
+    {
+      "title": "Unrestricted Token Recovery",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 285,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excesive Pivilege",
+      "vulnerable_functions": ["LiquidityGaugePool:recoverToken())"],
+      "lines": "186-188",
+      "description": "The Medium recoverToken function grants entities with the _NS_ROLES_RECOVERY_AGENT role the power to withdraw any token from the contract. This includes critical tokens such as staking and reward tokens. Entities with the _NS_ROLES_RECOVERY_AGENT role could potentially misuse this function to siphon off staking or reward tokens. This may result in financial losses for users and erode trust in the platform."
+    },
+    {
+      "title": "Race Condition",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Low",
+      "cwe_classification": 362,
+      "vulnerability_class": "Denial of Serive",
+      "vulnerability_subclass": "Race Condition",
+      "vulnerable_functions": [
+        "LiquidityGaugePool::withdrawRewards()",
+        "LiquidityGaugePool::exit()"
+      ],
+      "lines": "113-134, 140-143",
+      "description": "The _withdrawRewards function calculates the platformFee based on the current state of the _poolInfo.platformFee variable. Given the dynamic nature of blockchain states, it is possible that the platformFee variable could be changed by an admin between when a user initiates a transaction and when it gets mined, leading to unexpected fee deductions. A user intending to withdraw their rewards may be subjected to a different platform fee than anticipated. This can result in unexpected deductions, which could erode user trust in the system and lead to potential financial loss for the user."
+    },
+    {
+      "title": "Highly Permissive Owner Access",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 285,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excesive Pivilege",
+      "vulnerable_functions": [
+        "LiquidityGaugePool::withdrawRewards()",
+        "LiquidityGaugePool::exit()",
+        "LiquidityGaugePool::withdraw()"
+      ],
+      "lines": "113-134, 140-143, 109-111",
+      "description": "The LiquidityGaugePool contract's pause functionality impacts not only deposits but also withdrawals, including both token withdrawals and reward withdrawals. Pausing withdrawals, especially in emergencies or uncertain situations, can raise panic and mistrust among users. It denies users access to their staked assets and earned rewards, potentially causing financial and reputational damage to the platform. "
+    },
+    {
+      "title": "Lack of Emergency Withdrawal Mechanism",
+      "reported_impact": "Medium",
+      "reported_likelihood": "High",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "Insufficient Control Flow Management",
+      "vulnerable_functions": ["LiquidityGaugePool::"],
+      "lines": "",
+      "description": "The LiquidityGaugePool contract does not feature a mechanism for emergency withdrawals, excluding rewards. Users may be left unable to access their assets if issues arise with reward calculation. In the event of failures or unforeseen issues with the reward calculation (part of rewards calculation logic is in out-of-scope contracts), users would be unable to withdraw their primary deposited assets. This situation can lead to panic, potential financial losses for users, and erode trust in the platform."
+    },
+    {
+      "title": "CEI Pattern Violation",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 703,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "Insufficient Control Flow Management",
+      "vulnerable_functions": ["LiquidityGaugePool::deposit()"],
+      "lines": "67-85",
+      "description": "In the deposit function, a CEI pattern violation has been detected, although it doesn't immediately present a reentrancy risk. The amount to be deposited is taken after the corresponding state(variables/mappings) is updated. To resolve this issue, it is advisable to refactor the affected code to conform to the CEI pattern, thereby enhancing code readability and alignment with recognized coding standards."
+    }
+  ]
+}

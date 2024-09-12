@@ -1,0 +1,52 @@
+{
+  "description": {
+    "project_name": "Farcana",
+    "compiler_versions": ["0.8.20"]
+  },
+  "findings": [
+    {
+      "title": "Insufficient Parameter Validation in addVestingSchedule() Function of Vesting Contract",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Incorrect Input Validation",
+      "vulnerable_functions": ["FarcanaVesting::addVestingSchedule()"],
+      "lines": "60-93",
+      "description": "The addVestingSchedule function in the TokenVesting contract is responsible for creating new vesting schedules for beneficiaries. However, the function does not perform adequate checks on the input parameters such as cliff, duration, start, and their relationship to each other and to tgeTime."
+    },
+    {
+      "title": "Unrestricted Authority to Alter Vesting Beneficiary Addresses",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["FarcanaVesting::changeBeneficiaryAddress();"],
+      "lines": "190-198",
+      "description": "The TokenVesting contract includes a function changeBeneficiaryAddress, which allows the contract owner to alter the beneficiary address of any vesting schedule. This function grants the owner unchecked power to transfer the claim rights of vested tokens from one address to another at any point, without any constraints or oversight mechanisms.The DeedzCoin smart contract introduces a public mapping named balances to store the balance of tokens for each address. This is redundant as the contract inherits from the ERC20 contract, which already provides a function named balanceOf() to retrieve an address's balance and maintains a private mapping _balances to store token balances for addresses. Moreover, the contract does not override or update the functions (transfer, transferFrom) from the ERC20, which means, when those functions are called, only the _balances mapping from the ERC20 will be updated, and not the balances mapping of the DeedzCoin contract. This could lead to major inconsistencies in the token balance data"
+    },
+    {
+      "title": "Non-Utilization of SafeERC20 for Token Transfers in Vesting Contract",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "External Libraries",
+      "vulnerable_functions": ["FarcanaVesting::"],
+      "lines": "",
+      "description": "Using the standard transfer method without the safety checks of SafeERC20 can lead to unhandled exceptions, especially if the token contract does not return a boolean value as per the ERC20 standard"
+    },
+    {
+      "title": "Lack of Event Emissions in Key Functions",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 400,
+      "vulnerability_class": "Denial of Service",
+      "vulnerability_subclass": "Resource Exhaustion",
+      "vulnerable_functions": ["FarcanaVesting::"],
+      "lines": "",
+      "description": "The addVestingSchedule and changeBeneficiaryAddress functions in the vesting contract are crucial for managing vesting schedules and beneficiaries. However, both functions lack event emissions, which is a significant oversight. Events in smart contracts are essential for tracking changes on the blockchain, especially for key administrative actions"
+    }
+  ]
+}

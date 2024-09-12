@@ -1,0 +1,21 @@
+[profile.default]
+extra_output_files = ['metadata']
+ffi = true
+fs_permissions = [{ access = "read-write", path = ".forge-snapshots/" }]
+gas_reports = ["Funnel", "FunnelFactory"]
+libs = ['lib']
+out = 'out'
+solc = "0.8.17"
+src = 'src'
+
+[rpc_endpoints]
+arbitrum = "${ARBITRUM_RPC_URL}"
+avalanche = "${AVAX_RPC_URL}"
+goerli = "${GOERLI_RPC_URL}"
+ethereum = "${ETHEREUM_RPC_URL}"
+polygon = "${POLYGON_RPC_URL}"
+
+[etherscan]
+goerli = { key = "${ETHERSCAN_API_KEY}" }
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config

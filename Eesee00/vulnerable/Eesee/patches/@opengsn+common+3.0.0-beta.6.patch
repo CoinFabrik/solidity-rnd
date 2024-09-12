@@ -1,0 +1,19 @@
+diff --git a/node_modules/@opengsn/common/dist/environments/Environments.js b/node_modules/@opengsn/common/dist/environments/Environments.js
+index 5564c6c..f8b8d37 100644
+--- a/node_modules/@opengsn/common/dist/environments/Environments.js
++++ b/node_modules/@opengsn/common/dist/environments/Environments.js
+@@ -42,12 +42,12 @@ const defaultRelayHubConfiguration = {
+     baseRelayFee: 0
+ };
+ // TODO add as constructor params to paymaster instead of constants
+-const preRelayedCallGasLimit = 1e5;
++const preRelayedCallGasLimit = 2e5;
+ const forwarderHubOverhead = 5e4;
+ const defaultPaymasterConfiguration = {
+     forwarderHubOverhead: forwarderHubOverhead,
+     preRelayedCallGasLimit: preRelayedCallGasLimit,
+-    postRelayedCallGasLimit: 11e4,
++    postRelayedCallGasLimit: 14e4,
+     acceptanceBudget: preRelayedCallGasLimit + forwarderHubOverhead,
+     calldataSizeLimit: 10404
+ };

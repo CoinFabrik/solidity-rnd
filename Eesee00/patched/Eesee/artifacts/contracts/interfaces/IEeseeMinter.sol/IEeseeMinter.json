@@ -1,0 +1,314 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IEeseeMinter",
+  "sourceName": "contracts/interfaces/IEeseeMinter.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "IncorrectTokenURILength",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidConstructor",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidRecipient",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract IERC721",
+          "name": "collection",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "DeployDrop",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract IERC721",
+          "name": "collection",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "collectionID",
+          "type": "uint256"
+        }
+      ],
+      "name": "DeployLazyMint",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract IERC721",
+          "name": "collection",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenID",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        }
+      ],
+      "name": "LazyMint",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "baseURI",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "revealedURI",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "contractURI",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "royaltyReceiver",
+              "type": "address"
+            },
+            {
+              "internalType": "uint96",
+              "name": "royaltyFeeNumerator",
+              "type": "uint96"
+            }
+          ],
+          "internalType": "struct DropMetadata",
+          "name": "metadata",
+          "type": "tuple"
+        },
+        {
+          "internalType": "uint32",
+          "name": "mintLimit",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "mintStartTimestamp",
+          "type": "uint32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "duration",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "perAddressMintLimit",
+              "type": "uint32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "allowListMerkleRoot",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct IEeseeNFTDrop.StageOptions[]",
+          "name": "stages",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "deployDropCollection",
+      "outputs": [
+        {
+          "internalType": "contract IERC721",
+          "name": "collection",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "collectionID",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "contractURI",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct LazyMintCollectionMetadata",
+          "name": "collectionMetadata",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "URI",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "royaltyReceiver",
+              "type": "address"
+            },
+            {
+              "internalType": "uint96",
+              "name": "royaltyFeeNumerator",
+              "type": "uint96"
+            }
+          ],
+          "internalType": "struct LazyMintTokenMetadata",
+          "name": "tokenMetadata",
+          "type": "tuple"
+        },
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        }
+      ],
+      "name": "lazyMint",
+      "outputs": [
+        {
+          "internalType": "contract IERC721",
+          "name": "collection",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenID",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "lazyMintCollections",
+      "outputs": [
+        {
+          "internalType": "contract IEeseeNFTLazyMint",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "random",
+      "outputs": [
+        {
+          "internalType": "contract IEeseeRandom",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

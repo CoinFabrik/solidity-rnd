@@ -1,0 +1,63 @@
+tests/Scenarios
+allFiredEvents
+.build-temp
+build
+build_
+node_modules
+.env
+.certora*
+certora_*
+coverage/
+coverage.json
+coverageEnv/
+emv-*/
+formulas/
+outputs/
+Reports/
+scTopics
+*.DS_Store
+test-results.xml
+.tsbuilt
+yarn-error.log
+scenario/build/webpack.js
+.scencache
+.solcache
+.solcachecov
+scenario/.tscache
+script/certora
+tests/scenarios/
+junit.xml
+.build
+.idea
+.last_confs
+.saddle_history
+
+# yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# hardhat
+typechain
+artifacts
+cache
+
+# OZ
+.openzeppelin/
+# Build
+dist
+docgen-docs
+
+#openzepplin files
+.openzeppelin/*
+
+# yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions

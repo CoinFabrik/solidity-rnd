@@ -1,0 +1,47 @@
+{
+  "description": {
+    "project_name": "Venus Protocol",
+    "compiler_versions": ["0.8.13"]
+  },
+  "findings": [
+    {
+      "title": "Incorrect Mathematical Operation",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": [
+        "PegStability.sol::previewTokenUSDAmount()",
+        "PegStability.sol::getPriceInUSD()"
+      ],
+      "lines": "208-228",
+      "description": "It is assumed that in all cases the decimals for USDC and USDT are 18, but depending on the network this may not always be the case. Therefore, when calculating to estimate the swap, an incorrect value can be produced."
+    },
+    {
+      "title": "Check-Effect-Interaction",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 367,
+      "vulnerability_class": "Reentrancy",
+      "vulnerability_subclass": "Time-of-check Time-of-use (TOCTOU) Race Condition",
+      "vulnerable_functions": [
+        "PegStability.sol::swapVAIForStable()",
+        "PegStability.sol::swapStableForVAI()"
+      ],
+      "lines": "163, 189",
+      "description": "Reentrancy error: The static variable vaiMinted is modified after executing the transfer, which means the balance can be refilled before the transfer is completed, potentially allowing it to be re-executed."
+    },
+    {
+      "title": "Undocumented Logic",
+      "reported_impact": "Low",
+      "reported_likelihood": "Low",
+      "cwe_classification": 400,
+      "vulnerability_class": "Gas Usage",
+      "vulnerability_subclass": "Inefficient Algorithm",
+      "vulnerable_functions": ["PegStability.sol::swapStableForVAI()"],
+      "lines": "179-181",
+      "description": "The function performs two balance fetches for an account to subtract both results and verify the transfer, which consumes a lot of gas and does not comply with reentrancy norms. This might have a reason, but as it's undocumented, Hacken auditors cannot determine why it would be necessary."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "name": "periphery",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/neptune-mutual-blue/periphery",
+  "author": "Neptune Mutual",
+  "license": "Apache-2",
+  "scripts": {
+    "build": "forge build --sizes",
+    "compile": "forge build --sizes",
+    "clean": "forge clean && npx hardhat clean && rm -rf cache_foundry && rm -rf artifacts && rm -rf coverage",
+    "abi": "rm -rf ./abis && mkdir abis && node ./scripts/util/extract-abis.js",
+    "test": "hardhat test",
+    "coverage": "hardhat clean && hardhat coverage"
+  },
+  "standard": {
+    "env": [
+      "mocha"
+    ],
+    "global": [
+      "ethers",
+      "task",
+      "contract",
+      "artifacts",
+      "web3"
+    ]
+  },
+  "devDependencies": {
+    "@neptunemutual/solidoc": "^0.0.2-beta",
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+    "@nomicfoundation/hardhat-verify": "^1.0.0",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@openzeppelin/contracts-upgradeable": "^4.1.0",
+    "@openzeppelin/hardhat-upgrades": "^1.24.0",
+    "chai": "^4.3.7",
+    "dotenv": "10.0.0",
+    "ethers": "5.5.2",
+    "hardhat": "^2.14.0",
+    "hardhat-contract-sizer": "^2.8.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "merkletreejs": "^0.3.10",
+    "moment": "^2.29.4",
+    "node-enumerable": "^6.0.0",
+    "solidity-coverage": "^0.8.2",
+    "standard": "16.0.4"
+  },
+  "peerDependencies": {
+    "@nomiclabs/hardhat-etherscan": "3.1.0"
+  },
+  "resolutions": {
+    "hardhat/**/@ethereumjs/tx": "3.5.0"
+  },
+  "volta": {
+    "node": "16.13.1",
+    "yarn": "1.22.19"
+  },
+  "dependencies": {
+    "package.json": "^2.0.1"
+  }
+}

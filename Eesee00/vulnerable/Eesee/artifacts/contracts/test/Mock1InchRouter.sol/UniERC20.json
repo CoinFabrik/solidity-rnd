@@ -1,0 +1,41 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "UniERC20",
+  "sourceName": "contracts/test/Mock1InchRouter.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "ApproveCalledOnETH",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ETHTransferFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FromIsNotSender",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InsufficientBalance",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotEnoughValue",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ToIsNotThis",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x6055604b600b8282823980515f1a607314603f577f4e487b71000000000000000000000000000000000000000000000000000000005f525f60045260245ffd5b305f52607381538281f3fe730000000000000000000000000000000000000000301460806040525f80fdfea2646970667358221220da580664e7a73f5e776edbd2c7f5a218094e426e9fda2620bd9f8d620fbc3ed764736f6c63430008150033",
+  "deployedBytecode": "0x730000000000000000000000000000000000000000301460806040525f80fdfea2646970667358221220da580664e7a73f5e776edbd2c7f5a218094e426e9fda2620bd9f8d620fbc3ed764736f6c63430008150033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

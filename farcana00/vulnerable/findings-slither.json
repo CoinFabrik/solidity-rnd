@@ -1,0 +1,49 @@
+{
+    "description": {
+        "project_name": "Farcana",
+        "compiler_versions": [
+            "0.8.20"
+        ]
+    },
+    "findings": [
+        {
+            "title": "Validation",
+            "reported_impact": "Medium",
+            "reported_likelihood": "Medium",
+            "cwe_classification": 20,
+            "vulnerability_class": "Validation",
+            "vulnerability_subclass": "Missing Validation",
+            "vulnerable_functions": [
+                "TokenVesting.sol::addVestingSchedule();"
+            ],
+            "lines": "60-93",
+            "description": "The function lacks requirements in the input parameters and this can lead to inaccurate data. Missing zero address checks"
+        },
+        {
+            "title": "Best practices",
+            "reported_impact": "Low",
+            "reported_likelihood": "Low",
+            "cwe_classification": 710,
+            "vulnerability_class": "Best Practices",
+            "vulnerability_subclass": "Use of Unsafe Library",
+            "vulnerable_functions": [
+                "TokenVesting.sol"
+            ],
+            "lines": "",
+            "description": "Using ERC20 instead of SafeERC. Se ignoran los metodos seguros"
+        },
+        {
+            "title": "Best practices",
+            "reported_impact": "Low",
+            "reported_likelihood": "Low",
+            "cwe_classification": 117,
+            "vulnerability_class": "Best Practices",
+            "vulnerability_subclass": "Missing Event Emissions",
+            "vulnerable_functions": [
+                "TokenVesting.sol"
+            ],
+            "lines": "",
+            "description": "Event emissions missing"
+        }
+    ]
+}

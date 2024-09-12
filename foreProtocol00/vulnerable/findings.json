@@ -1,0 +1,160 @@
+{
+  "description": {
+    "project_name": "Fore Protocol",
+    "compiler_versions": ["0.8.7"]
+  },
+  "findings": [
+    {
+      "title": "Mishandled Edge Case; Data Consistency",
+      "reported_impact": "Critical",
+      "reported_likelihood": "High",
+      "cwe_classification": 0,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Validation",
+      "vulnerable_functions": ["MarketLib::_isVerified()"],
+      "lines": "75-77",
+      "description": "In the prediction market verification system, the market is considered `verified` if the verified amount of the major side is equal to the total amount of the minor side. This method can be easily manipulated, especially when there is a significant difference between the sides. It can lead to a loss of confidence in the fairness of the prediction market, economic misalignment, and the potential for manipulation."
+    },
+    {
+      "title": "Denial of Service Vulnerability",
+      "reported_impact": "Critical",
+      "reported_likelihood": "High",
+      "cwe_classification": 400,
+      "vulnerability_class": "Denial of Service",
+      "vulnerability_subclass": "Resource Exhaustion",
+      "vulnerable_functions": ["BasicMarket::withdrawVerificationReward()"],
+      "lines": "305-366",
+      "description": "The withdrawVerificationReward function attempts to transfer tokens from its own address using the transferFrom method. Regular ERC20 implementations typically do not allow for this kind of transfer without prior approval calls, leading to potential denial-of-service (DoS) attacks as the function can be made to fail consistently.The addVestingSchedule and changeBeneficiaryAddress functions in the vesting contract are crucial for managing vesting schedules and beneficiaries. However, both functions lack event emissions, which is a significant oversight. Events in smart contracts are essential for tracking changes on the blockchain, especially for key administrative actions"
+    },
+    {
+      "title": "Unauthorized Access To Critical Functions",
+      "reported_impact": "Critical",
+      "reported_likelihood": "High",
+      "cwe_classification": 285,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Authorization",
+      "vulnerable_functions": ["BasicMarket::withdrawVerificationReward()"],
+      "lines": "305-366",
+      "description": "The function lacks proper access controls, allowing any external party to dictate how verifier rewards are withdrawn. This design flaw can be exploited by a malicious actor to control the distribution of power between NFT verifiers, potentially gaining undue advantages in future markets."
+    },
+    {
+      "title": "Denial of Service Vulnerability",
+      "reported_impact": "Critical",
+      "reported_likelihood": "High",
+      "cwe_classification": 400,
+      "vulnerability_class": "Denial of Service",
+      "vulnerability_subclass": "Resource Exhaustion",
+      "vulnerable_functions": ["BasicMarket::withdrawVerificationReward()"],
+      "lines": "305-366",
+      "description": "The withdrawVerificationReward function attempts to transfer tokens from its own address using the transferFrom method. Regular ERC20 implementations typically do not allow for this kind of transfer without prior approval calls, leading to potential denial-of-service (DoS) attacks as the function can be made to fail consistently.The addVestingSchedule and changeBeneficiaryAddress functions in the vesting contract are crucial for managing vesting schedules and beneficiaries. However, both functions lack event emissions, which is a significant oversight. Events in smart contracts are essential for tracking changes on the blockchain, especially for key administrative actions"
+    },
+    {
+      "title": "Data Consistency",
+      "reported_impact": "Critical",
+      "reported_likelihood": "High",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Input Validation",
+      "vulnerable_functions": ["ForeProtocol::upgradeTier()"],
+      "lines": "",
+      "description": "The function upgradeTier enables a user to upgrade their NFT tier if they meet the verificationsDone requirement. However, the function does not check if the tier they are upgrading to actually exists in the _tiers mapping. As a result, a user might upgrade their NFT to a non-existent tier. If the owner later defines new tiers, this could result in data inconsistency where some users have upgraded to tiers they should not have been able to"
+    },
+    {
+      "title": "Denial of Service Vulnerability; Invalid Calculations",
+      "reported_impact": "Critical",
+      "reported_likelihood": "High",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": ["BasicMarket::withdrawVerificationReward()"],
+      "lines": "305-366",
+      "description": "In cases where a verifier votes for the wrong side and is therefore eligible for a penalty, the function designed to calculate the amounts of toDisputeCreator and toHighGuard incorrectly uses the multipliedPowerOf  function instead of the powerOf function to calculate the amounts to transfer. This discrepancy becomes pronounced in scenarios where the NFT ID multiplier exceeds 100%. This difference can cause a denial of service (DoS) on the line: foreVerifiers.marketBurn(power • toDisputeCreator • toHighGuard)."
+    },
+    {
+      "title": "Mishandled Edge Case; Data Consistency",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 287,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Validation Logic Error",
+      "vulnerable_functions": [
+        "ForeVerifiers::isApprovedForAll()",
+        "ForeVerifiers::_transfer()"
+      ],
+      "lines": "",
+      "description": "The fore operator holds overriding control on the verification NFTs (vNFTs), which creates a centralized point of vulnerability. If the owner's private keys are compromised, an attacker can take over any vNFT, potentially devaluing them and extracting tokens. A vulnerability arises from the isApprovedForAll and _transfer() functions, which always approve an action if it originates from a foreOperator. With the setFactoryStatus function, there is a risk of introducing an erroneous address as a whitelisted factory or, if the owner's keys are compromised, a malicious address."
+    },
+    {
+      "title": "Requirements Violation; Data Consistency",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Input Validation Error",
+      "vulnerable_functions": [
+        "ProtocolConfig::constructor()",
+        "ProtocolConfig::_setConfig()"
+      ],
+      "lines": "",
+      "description": "The ProtocolConfig contract allows setting of market validation and dispute time periods without ensuring they align with the documentation constraints. Consequently, a market can be created with periods not matching the documented standards. With periods not restricted, malicious actors might exploit this flexibility, especially if shorter periods don't provide stakeholders adequate time to react"
+    },
+    {
+      "title": "Coarse-Grained Access Control",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 285,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Authorization",
+      "vulnerable_functions": [
+        "ForeVerifiers::isApprovedForAll()",
+        "ForeVerifiers::_transfer()"
+      ],
+      "lines": "",
+      "description": "The project's design gives sole privilege to the highGuard address to resolve disputes. While the protocolConfig contract's owner can change the highGuard, the exclusive reliance on a single address poses significant security risks. If control over the highGuard private key is compromised, an attacker could manipulate prediction market results for their advantage. An attacker with control over the highGuard address could unilaterally resolve disputes in their favor, potentially manipulating market outcomes and compromising the integrity of the entire system"
+    },
+    {
+      "title": "Requirements Violation",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 285,
+      "vulnerability_class": "Authorization",
+      "vulnerability_subclass": "Privilege Misuse",
+      "vulnerable_functions": ["ProtocolConfig::"],
+      "lines": "",
+      "description": "Although it is stated that the highGuard address is a bunch of NFT holders, there is no such implementation in the contract. The flexibility of the high guard address allows the system owner to specify any entity, without the requirement for it to be a multi-sig wallet configuration or limited solely to NFT holders."
+    },
+    {
+      "title": "Requirement Violation; Data Consistency",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 754,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Validation",
+      "vulnerable_functions": ["ProtocolConfig::editTier()"],
+      "lines": "",
+      "description": "The editTier function lacks comprehensive checks to maintain the ordered and hierarchical structure of minVerifications and multipliers across tiers, potentially allowing for inconsistent tier configurations.There is a possibility of setting minVerifications for a tier to a value greater than its subsequent tier or lesser than its previous tier, leading to inconsistency in tier structuring"
+    },
+    {
+      "title": "Redundant Memory Allocation",
+      "reported_impact": "Medium",
+      "reported_likelihood": "High",
+      "cwe_classification": 0,
+      "vulnerability_class": "Gas Usage",
+      "vulnerability_subclass": "Redundant Memory Allocation",
+      "vulnerable_functions": ["MarketLib::_predict()"],
+      "lines": "",
+      "description": "The line MarketLib.Market memory m = market; creates an in-memory copy of the storage variable market. Given the size of the struct (multiple variables), this can lead to a significant Gas overhead. Only one attribute of m (endPredictionTimestamp) is accessed afterward. It is wasteful to create an entire in-memory copy of the market for this purpose. It will lead to increased Gas cost for every invocation of the function, making predictions more expensive for users."
+    },
+    {
+      "title": "Absence of ReentrancyGuard for ERC721 Functions",
+      "reported_impact": "Medium",
+      "reported_likelihood": "High",
+      "cwe_classification": 280,
+      "vulnerability_class": "Reentrancy",
+      "vulnerability_subclass": "Missing Mitigations",
+      "vulnerable_functions": ["BasicMarket::"],
+      "lines": "",
+      "description": "The project's contracts do not utilize the ReentrancyGuard for functions that interact with ERC721 tokens. Although the project adheres to the Checks-Effects-Interactions (CEI) pattern, which can help prevent reentrancy attacks, it remains best practice to implement ReentrancyGuard as an additional security layer. Without the explicit use of ReentrancyGuard, functions are potentially more exposed to reentrancy attacks even if the CEI pattern is followed. Not using the ReentrancyGuard is a deviation from accepted smart contract development best practices."
+    }
+  ]
+}

@@ -1,0 +1,436 @@
+{
+  "description": {
+    "project_name": "Lit Lab Games",
+    "compiler_versions": ["0.8.11"]
+  },
+  "findings": [
+    {
+      "title": "Data Consistency",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 0,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Validation",
+      "vulnerable_functions": ["CyberTitansTournament::startTournament()"],
+      "lines": "169",
+      "description": "The function startTournament() incorrectly compares _cttPlayers with LITTPlayers in the check: require(_cttPlayers == tournament.numOfTokenPlayers, BadLITTPlayers) This will lead to incorrect data management since the checked variable is not the correct one. As a consequence, this function does not work as intended."
+    },
+    {
+      "title": "Invalid Calculations",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 640,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "State Update Error",
+      "vulnerable_functions": [
+        "LitlabPreStakingBox::withdrawRewards()",
+        "LitlabPreStakingBox::withdraw()"
+      ],
+      "lines": "100",
+      "description": "The withdraw function removes the staked tokens and, if certain conditions are met, also removes the rewards. The withdrawRewards function only claims the rewards. The issue here is that withdrawRewards() does not update the value of PendingRewards. If withdrawRewards is used before withdraw, the totalRewards value will not be accurately updated to reflect the changed PendingRewards value, potentially leading to claiming more than intended."
+    },
+    {
+      "title": "Invalid Calculations",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": ["LITTVestingContract::_executeVesting()"],
+      "lines": "185-209",
+      "description": "In the _executeVesting() function, the tokensPerSecond value is being counted incorrectly. This is because the calculation does not take into account the portion of the tokens that are released on the TGE.This leads to situations in which tokens are released too quickly."
+    },
+    {
+      "title": "Data Consistency",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 285,
+      "vulnerability_class": "Authorization",
+      "vulnerability_subclass": "Authorization",
+      "vulnerable_functions": ["LITTAdvisorsTeam::setListingDate()"],
+      "lines": "47",
+      "description": "The listingDate function should only be callable once, but this check is not implemented. This allows it to be called multiple times and modified, which could enable undesired future transfers to other addresses."
+    },
+    {
+      "title": "Data Consistency",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Input Validation",
+      "vulnerable_functions": [
+        "CyberTitansTournament::joinTournament()",
+        "CyberTitansTournament::startTournament()",
+        "CyberTitansTournament::finalizeTournament()"
+      ],
+      "lines": "146-156, 166-174, 178-201",
+      "description": "The functions joinTournament(), startTournament(), and finalizeTournament() take an id value as an argument, which is used to interact with an array of created tournaments stored in the CyberTitansTournament contract. The value passed as id is not validated. This issue leads to the possibility of interacting with non-existent tournaments."
+    },
+    {
+      "title": "Invalid Calculations",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": [
+        "LitlabPreStakingBox::_calculateVestingTokens()"
+      ],
+      "lines": "195-218",
+      "description": "In the _calculateVestingTokens() function, the tokensPerSecond value is being counted incorrectly. This is because the calculation does not take into account the portion of the tokens that can be released on the TGE.This leads to situations in which more tokens can be released than the vested amount. Users can wait the whole vesting period and call withdraw() first and withdrawInitial() afterward to extract 115% of the vested amount."
+    },
+    {
+      "title": "Invalid Hardcoded Value",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 785,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Mathematical Error",
+      "vulnerable_functions": ["CyberTitansTournament::_buildArrays()"],
+      "lines": "62-93",
+      "description": "According to the documentation, the values stored in the two-dimensional array prizes[][8] are the percentages of awards for achieving winning places in tournaments. The values of the prizes[5] array, when summed up after multiplication by the number of winners per place, make a result of more than 100%.This leads to more tokens being allocated for rewards than necessary, which can lead to an insufficient balance in the smart contract."
+    },
+    {
+      "title": "Insufficient Balance",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": ["CyberTitansGame::finalizeGame()"],
+      "lines": "128-142",
+      "description": "In the CyberTitansGame contract, the finalizeGame() function first sends rewards to the winners, then takes fees and burns some amount of tokens. The function does not validate the sum of these operations; it can be greater than the number of tokens allocated for the game, as there is no limit on the values used for computation: winners[], fee, and rake. This can lead to an insufficient balance in the smart contract."
+    },
+    {
+      "title": "Invalid Calculations",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": ["LitlabPreStakingBox::_getData()"],
+      "lines": "183-196",
+      "description": "In the _getData() function, rewardsTokensPerSec is calculated. To do so, there are two divisions by 10**18 which are unnecessary, as they cancel each other out mathematically. However, the way that calculation is set right now, leads to two errors: First, Solidity language does not have floating point numbers and thus the result of the calculation will not be accurate, leaving some residual leftover tokens. Second, the if (totalStakedAmount > 0) check is incorrect, as for 0 < totalStakedAmount < 1e18 range there will be a case of the division by 0, which will result in Denial of Service violation."
+    },
+    {
+      "title": "Requirements Violation",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 285,
+      "vulnerability_class": "Logic",
+      "vulnerability_subclass": "Flawed Design",
+      "vulnerable_functions": ["CyberTitansGame::finalizeGame()"],
+      "lines": "128-142",
+      "description": "In the NatSpec, it is specified that the rake value is used for the burn amount calculation and the fee for fee calculation. In the finalizeGame() function, the number of tokens needed for burning is taken as fees, and the number of fees is burned (lines 141,142). This leads to the expected number of commissions received and tokens burned diverging from their actual values."
+    },
+    {
+      "title": "Undocumented Behavior",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 957,
+      "vulnerability_class": "Documentation",
+      "vulnerability_subclass": "Incorrect Documentation",
+      "vulnerable_functions": [
+        "CyberTitansGame::finalizeGame()",
+        "CyberTitansTournament::finalizeTournament()"
+      ],
+      "lines": "128-142, 177-194",
+      "description": "In the CyberTitansGame contract, if the token used is not $LITT, the code implementation will transfer a 5% of the game.totalBet to the team wallet instead of 2.5% burned and 2.5% sent to the team wallet. This particular case is not reflected in the documentation. The code should not contain undocumented functionality."
+    },
+    {
+      "title": "Coarse-Grained Authorization Model",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excessive Privilege",
+      "vulnerable_functions": ["CyberTitansGame::changeWallets()"],
+      "lines": "56-60",
+      "description": "The function changeWallets() in both CyberTitansGames and CyberTitansTournament sets three critical state variables at once, which can lead to dangerous situations. A project should have a fine-grained access control system if it has multiple layers of auth-related functionality. In this case, the variable wallet is the company wallet receiving the fees; the manager has a critical access control role; and litlabToken corresponds to the token. Additionally, this design is not efficient in terms of Gas expense, since three storage variables must be accessed every time, even if only one of them has to be set. The code should not contain undocumented functionality."
+    },
+    {
+      "title": "Non-Finalized Code",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 1121,
+      "vulnerability_class": "Best Practices",
+      "vulnerability_subclass": "Incomplete Code",
+      "vulnerable_functions": [
+        "CyberTitansTournament::retireFromTournament()",
+        "CyberTitansTournament::event()",
+        "CyberTitansTournament::onRetiredTournament()"
+      ],
+      "lines": "156-159, 49",
+      "description": "The function retireFromTournament() and the Event onRetiredTournament are present in the code as a draft, suggesting there will be an upgrade of the provided contracts. This means that the code is not finalized and additional changes will be introduced in the future, which cannot be validated."
+    },
+    {
+      "title": "Requirements Violation",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 285,
+      "vulnerability_class": "Logic",
+      "vulnerability_subclass": "Flawed Design",
+      "vulnerable_functions": ["CyberTitansTournament::joinTournament()"],
+      "lines": "137-148",
+      "description": "Users can only join a tournament using joinTournament() if they make a LITT token transfer, but not if they hold the CTT tickets. The code should match the provided documentation and intended behavior."
+    },
+    {
+      "title": "Undocumented Behavior",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 957,
+      "vulnerability_class": "Documentation",
+      "vulnerability_subclass": "Incorrect Documentation",
+      "vulnerable_functions": [
+        "LITTAdvisorsTeam::teamWithdraw()",
+        "LITTAdvisorsTeam::setApprovalWallets()",
+        "LITTAdvisorsTeam::MAX_SIGNATURES_TEAM"
+      ],
+      "lines": "106-129, 62-64, 14",
+      "description": "In order to perform a teamWithdraw(), a minimum numTeamApprovals must be reached. However, this functionality is not described in the documentation and thus a proper evaluation is not possible. It is not clear how many approvals are needed, although the state variable MAX_SIGNATURES_TEAM points towards no more than three. On the other hand, the function setApprovalWallets() has an input array of up to 5 wallets. If this function is used to set 5 new wallets, the state variable numTeamApprovals should be reset to make sure old wallets are not taken into account anymore. Otherwise, old wallets should be checked and removed from the count if they are indeed not allowed anymore."
+    },
+    {
+      "title": "Denial of Service",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 400,
+      "vulnerability_class": "Denial Service",
+      "vulnerability_subclass": "Resource Exhaustion",
+      "vulnerable_functions": [
+        "LitlabPreStakingBox::withdrawInitial()",
+        "LitlabPreStakingBox::withdraw()",
+        "LITTAdvisorsTeam::teamWithdraw()",
+        "LITTAdvisorsTeam::addAdvisor()",
+        "LITTAdvisorsTeam::advisorWithdraw()",
+        "LITTVestingContract::withdrawNewGames()",
+        "LITTVestingContract::withdrawMarketing()",
+        "LITTVestingContract::withdrawLiquidReserves()",
+        "LITTVestingContract::withdrawAirdrops()",
+        "LITTVestingContract::withdrawInGameRewards()",
+        "LITTVestingContract::withdrawFarming()"
+      ],
+      "lines": "",
+      "description": "there is no check in those functions that makes sure that the token balance of the contract is sufficient. The documentation provided does not clarify how the tokens are going to be transferred into the different contracts since there is no function in them to deposit tokens during the contract creation or in other functions such as stake(). As a consequence, it cannot be guaranteed that the state variables tracking the token balance of the contracts have any effect at all (e.g. totalRewards). It is the same case for constant variables that represent the total amount of tokens (e.g. TEAM_AMOUNT, LIQUID_RESERVES_AMOUNT)."
+    },
+    {
+      "title": "Requirement Violation",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Validation",
+      "vulnerable_functions": ["LitlabPreStakingBox::stake()"],
+      "lines": "57-83",
+      "description": "The function stake() should be called after the deployment of the contract only once. However, there is no check that makes sure that this is the case.Additionally, the stake() function can be called after the end of staking date, which leads to the fact that rewards can be received instantly."
+    },
+    {
+      "title": "Data Consistency",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 824,
+      "vulnerability_class": "State Management",
+      "vulnerability_subclass": "Invalid State",
+      "vulnerable_functions": ["CyberTitansTournament::finalizeTournament()"],
+      "lines": "177-224",
+      "description": "In the finalizeTournament() function, there is no check to prevent finalizing an already finalized tournament. This can lead to a situation where rewards are being paid multiple times for the same tournament"
+    },
+    {
+      "title": "Data Consistency",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 642,
+      "vulnerability_class": "State Management",
+      "vulnerability_subclass": "Incorrect State Update",
+      "vulnerable_functions": ["LITTAdvisorsTeam::removeAdvisor()"],
+      "lines": "57-59",
+      "description": "In the removeAdvisor() function, the removal of the advisor's vesting is done incorrectly. The advisor vesting amount should not be reset to the default value of 0 by using delete advisors[_wallet];, but should be updated to the amount that the advisor has already claimed, taken from advisorsWithdrawn[_wallet]. This is needed to prevent data consistency issues and to correctly track data with the getAdvisorData() view function, and to prevent underflow in the advisorsWithdrawn[msg.sender] > 0, 'NotAllowed')."
+    },
+
+    {
+      "title": "Requirements Violation",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 642,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Input Validation Error",
+      "vulnerable_functions": [
+        "LITTVestingContract::withdrawNewGames()",
+        "LITTVestingContract::withdrawInGameRewards()",
+        "LITTVestingContract::withdrawFarming()"
+      ],
+      "lines": "",
+      "description": "In the withdrawNewGames(), withdrawInGameRewards(), and withdrawFarming() functions, the vesting schedule is not in line with the tokenomics presented in the whitepaper. This can lead to trust issues with the community and more tokens being in circulation than described in the documentation"
+    },
+
+    {
+      "title": "Requirements Violation",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 285,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Input Validation Error",
+      "vulnerable_functions": ["LITTVestingContract::_executeVesting()"],
+      "lines": "151-171",
+      "description": "In the _executeVesting() function, there is an invalid validation that prevents users from claiming TGE tokens before the cliff time. require(block.timestamp >= listing_date + (data._cliffMonths * 30 days), 'TooEarly'); This leads to a situation where the TGE tokens will not be claimable at the listing date."
+    },
+
+    {
+      "title": "Non-Finalized Code",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 489,
+      "vulnerability_class": "Code Quality",
+      "vulnerability_subclass": "Debug Code",
+      "vulnerable_functions": ["LITTAdvisorsTeam::teamWithdraw()"],
+      "lines": "106-129",
+      "description": "The smart contract LITTAdvisorsTeam uses truffle/console and console.log() functions inside. This means that the code is submitted in a non-final version."
+    },
+
+    {
+      "title": "Data Consistency",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 670,
+      "vulnerability_class": "State Management",
+      "vulnerability_subclass": "Invalid State",
+      "vulnerable_functions": ["LitlabPreStakingBox::withdraw()"],
+      "lines": "",
+      "description": "During the withdrawInitial() function execution data used in rewards calculation is not updated. Resulting in a situation where users who did not withdraw their TGE tokens are rewarded equally as those who had withdrawn."
+    },
+
+    {
+      "title": "Missing Events for Critical Value Update",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 352,
+      "vulnerability_class": "Event Emission",
+      "vulnerability_subclass": "Missing Critical Events",
+      "vulnerable_functions": [
+        "CyberTitansGame::",
+        "CyberTitansTournament::",
+        "LitlabPreStakingBox::",
+        "LITTAdvisorsTeam::"
+      ],
+      "lines": "",
+      "description": "The following functions do not emit relevant events after executing the sensitive actions of setting the fundingRate, updateTime and proposalTime, and transferring the rewards."
+    },
+
+    {
+      "title": "Undocumented Behavior",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 710,
+      "vulnerability_class": "Documentation",
+      "vulnerability_subclass": "Missing Documentation",
+      "vulnerable_functions": [
+        "CyberTitansGame::GameStruct.token - changeWallets(), checkWallets(), createGame()"
+      ],
+      "lines": "",
+      "description": "Although the documentation refers to LitlabToken $LITT as the token to be used in the project, the following contracts allow the use of different addresses as token inputs. The code should not contain undocumented functionality."
+    },
+
+    {
+      "title": "Inefficient Gas Model: Uncontrolled Loop of Storage Interactions",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 400,
+      "vulnerability_class": "Gas Optimization",
+      "vulnerability_subclass": "Storage Interaction",
+      "vulnerable_functions": ["CyberTitansTournament::changeArray()"],
+      "lines": "106-111",
+      "description": "The function changeArrays() performs loops of uncontrolled iterations. Since those loops interact with storage variables, the block gas limit can be reached and the function may fail. Additionally, this design is not efficient in terms of Gas expense, since different storage variables must be accessed every time, even if only one of them has to be set."
+    },
+
+    {
+      "title": "Inefficient Gas Model: Uncontrolled Loop of Storage Interactions",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 400,
+      "vulnerability_class": "Gas Optimization",
+      "vulnerability_subclass": "Storage Interaction",
+      "vulnerable_functions": [
+        "CyberTitansGame::createGame()",
+        "CyberTitansGame::finalizeGame()",
+        "CyberTitansTournament::finalizeTournament()",
+        "LitlabPreStakingBox::stake()"
+      ],
+      "lines": "",
+      "description": "The following functions perform highly expensive storage operations inside a loop, which can reach the block Gas limit"
+    },
+
+    {
+      "title": "Inefficient Gas Model: Storage Abuse",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 400,
+      "vulnerability_class": "Gas Optimization",
+      "vulnerability_subclass": "Storage Access",
+      "vulnerable_functions": ["CyberTitansTournament::finalizeTournament()"],
+      "lines": "177-224",
+      "description": "In the finalizeTournament() function, the state variables tournament.tournamentAssuredAmount and tournament.token are accessed multiple times, consuming Gas unnecessarily."
+    },
+
+    {
+      "title": "Inefficient Gas Model: Storage Abuse",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 400,
+      "vulnerability_class": "Gas Optimization",
+      "vulnerability_subclass": "Storage Access",
+      "vulnerable_functions": ["CyberTitansGame::finalizeGame()"],
+      "lines": "128-148",
+      "description": "In the finalizeGame() function, the state variables game.token and game.totalBet are accessed multiple times, consuming Gas unnecessarily."
+    },
+
+    {
+      "title": "Inefficient Gas Model: Storage Abuse",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 400,
+      "vulnerability_class": "Gas Optimization",
+      "vulnerability_subclass": "Storage Access",
+      "vulnerable_functions": ["LITTVestingContract::_executeVesting()"],
+      "lines": "151-171",
+      "description": "In the _executeVesting() function, the state variable data._amount is accessed multiple times, consuming Gas unnecessarily."
+    },
+
+    {
+      "title": "Inefficient Gas Model: Cache Length",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 400,
+      "vulnerability_class": "Gas Optimization",
+      "vulnerability_subclass": "Loop Optimization",
+      "vulnerable_functions": ["LITTAdvisorsTeam::approveTeamWithdraw()"],
+      "lines": "94-103",
+      "description": "In the approveTeamWithdraw() function, a for loop iterates through approvalWallets.length. The storage variable approvalWallets will be thus read at every iteration, consuming Gas unnecessarily."
+    },
+
+    {
+      "title": "Inefficient Gas Model: Cache Length",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 400,
+      "vulnerability_class": "Gas Optimization",
+      "vulnerability_subclass": "Loop Optimization",
+      "vulnerable_functions": ["LITTAdvisorsTeam::teamWithdraw()"],
+      "lines": "106-129",
+      "description": "In the teamWithdraw() function, a for loop iterates through approvalWallets.length. The storage variable approvalWallets will be thus read at every iteration, consuming Gas unnecessarily."
+    },
+
+    {
+      "title": "Inefficient Gas Model: Non-specific View Function",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 400,
+      "vulnerability_class": "Gas Optimization",
+      "vulnerability_subclass": "View Function Optimization",
+      "vulnerable_functions": [
+        "LitlabPreStakingBox::_getData()",
+        "LitlabPreStakingBox::withdrawRewards()"
+      ],
+      "lines": "",
+      "description": "In the withdrawRewards() function, there is a call to the view function _getData() in order to get pendingRewards. Said function computes a lot of variables, but only one of them is used. Although it is a view function, it will spend Gas when called by a non-view function."
+    }
+  ]
+}

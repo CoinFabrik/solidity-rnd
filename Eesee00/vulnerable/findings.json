@@ -1,0 +1,151 @@
+{
+  "description": {
+    "project_name": "Eesee",
+    "compiler_versions": [""]
+  },
+  "findings": [
+    {
+      "title": "Reusable msg.value Allows Multiple Lot Creation with Single Payment",
+      "reported_impact": "High",
+      "reported_likelihood": "High",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Validation",
+      "vulnerable_functions": [
+        "Eesee::createLots()",
+        "Eesee::createLotsAndBuyTickets()"
+      ],
+      "lines": "102-123, 169-178, ",
+      "description": "The multicall function does not account for the cumulative msg.value when processing multiple delegate calls to the createLots function."
+    },
+    {
+      "title": "Premature Asset Claim in receiveAssets() Function due to Missing Closure Check",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Validation",
+      "vulnerable_functions": ["Eesee::receiveAssets()"],
+      "lines": "187-229",
+      "description": "The receiveAssets function of the Eesee smart contract exhibits a logical flaw where it lacks the necessary validation to ensure that a lot is fully closed (i.e., all tickets were sold) before allowing assets to be claimed."
+    },
+    {
+      "title": "Inadequate msg.value Validation in createLots() Allows Multiple Lot Creation with Single Payment",
+      "reported_impact": "Critical",
+      "reported_likelihood": "Critical",
+      "cwe_classification": 703,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Validation",
+      "vulnerable_functions": ["Eesee::createLots()"],
+      "lines": "102-123",
+      "description": "Since msg.value remains constant throughout a transaction, this check should be cumulative to prevent the same msg.value from being counted multiple times."
+    },
+    {
+      "title": "Incorrect Calculation of maxESE Due to Bitwise XOR Operator",
+      "reported_impact": "Medium",
+      "reported_likelihood": "High",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": ["Eesee::_createLot()"],
+      "lines": "484-587",
+      "description": "the caret symbol (^) is mistakenly used instead of the double asterisk (**) which is the correct operator for exponentiation in Solidity. The caret symbol in Solidity is a bitwise XOR operator, not an exponentiation operator."
+    },
+    {
+      "title": "Fixed Fee Calculation in EeseeRaribleRouter Incompatible with Rarible's Dynamic Fee Structure",
+      "reported_impact": "Medium",
+      "reported_likelihood": "High",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": ["EeseeRaribleRouter::purchaseAsset()"],
+      "lines": "36-62",
+      "description": "The function purchaseAsset is designed to interact with the Rarible marketplace for buying NFTs. However, this fixed fee calculation is incompatible with Rarible's dynamic fee structure"
+    },
+    {
+      "title": "Front-Running and Indiscriminate Lock-Up Extensions Due to Untracked Deposit Durations in Staking Contract",
+      "reported_impact": "High",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Excesive Privilege",
+      "vulnerable_functions": [
+        "EeseeStaking::deposit()",
+        "EeseeStaking::changeDuration()"
+      ],
+      "lines": "86-120, 326-330",
+      "description": "There are no safeguards in place to prevent the admin from changing the duration while deposit transactions are pending, which can lead to unexpected lock-up times for users."
+    },
+    {
+      "title": "Zero Reward Rate Setting in updateRewardRates() Function Can Nullify Staking Yields",
+      "reported_impact": "High",
+      "reported_likelihood": "Low",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Input Validation",
+      "vulnerable_functions": ["EeseeStaking::updateRewardRates()"],
+      "lines": "291-319",
+      "description": "Although the function validates the length of the arrays and the progression of rates, it does not prevent setting a rate to zero, which can halt the reward accumulation process. "
+    },
+    {
+      "title": "ESE Token Supply Cap Inconsistency with Tokenomics",
+      "reported_impact": "High",
+      "reported_likelihood": "Low",
+      "cwe_classification": 1068,
+      "vulnerability_class": "Logic Flaw",
+      "vulnerability_subclass": "Documentation",
+      "vulnerable_functions": ["ESE::addVestingBeneficiaries()"],
+      "lines": "87-115",
+      "description": "the function's current logic only checks for overflow against the maximum value of a uint96 data type, rather than adhering to the tokenomic's specified cap of 1 billion tokens."
+    },
+    {
+      "title": "Immutable callbackGasLimit in Chainlink VRF Consumer Restricts Adaptability to Gas Fluctuations",
+      "reported_impact": "High",
+      "reported_likelihood": "Low",
+      "cwe_classification": 410,
+      "vulnerability_class": "Gas Usage",
+      "vulnerability_subclass": "Insufficient Resource Pool",
+      "vulnerable_functions": ["EeseeRandom::callbackGasLimit"],
+      "lines": "35",
+      "description": "The immutable private variable callbackGasLimit that sets the Gas limit for Chainlink VRF callbacks restricts the contract ability to adapt to fluctuating Gas prices on the Ethereum network."
+    },
+    {
+      "title": "Immutable Payee Information in EeseeFeeSplitter Contract May Lead to Funds Misallocation",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Low",
+      "cwe_classification": 640,
+      "vulnerability_class": "Access Control",
+      "vulnerability_subclass": "Logic Flaw",
+      "vulnerable_functions": ["EeseeFeeSplitter::"],
+      "lines": "13-81",
+      "description": "the contract lacks the functionality to update payee information post-deployment. This immutability can lead to a scenario where funds become locked or misallocated due to changes in business structure or payee addresses"
+    },
+    {
+      "title": "Absence of Pausable Mechanisms in Eesee Contracts Risks Uncontrolled Exposure to External Vulnerabilities",
+      "reported_impact": "Low",
+      "reported_likelihood": "Medium",
+      "cwe_classification": 703,
+      "vulnerability_class": "Logic Flaw",
+      "vulnerability_subclass": "Improper Check or Handling of Exceptional Conditions",
+      "vulnerable_functions": [
+        "EeseeOpenseaRouter::*",
+        "EeseeRaribleRouter::*",
+        "EeseePeriphery::*",
+        "EeseeSwap::*"
+      ],
+      "lines": "12-85, 11-62, 10-244, 7-117",
+      "description": "The Eesee ecosystem lacks emergency halting mechanisms or circuit breakers. In the absence of such controls, the inability to pause operations in response to detected vulnerabilities or external protocol upgrades can lead to exploitation"
+    },
+    {
+      "title": "Potential Front-Run with changeFee() for Eesee and EeseeDrops",
+      "reported_impact": "Medium",
+      "reported_likelihood": "Low",
+      "cwe_classification": 362,
+      "vulnerability_class": "Logic Flaw",
+      "vulnerability_subclass": "Race Condition",
+      "vulnerable_functions": ["Eesee::changeFee()", "EeseeDrops::changeFee()"],
+      "lines": " 637, 216",
+      "description": "If an admin transaction that calls changeFee is included in a block before a user transaction that calls listDrop or createLots, the user could end up paying a different fee than expected. "
+    }
+  ]
+}

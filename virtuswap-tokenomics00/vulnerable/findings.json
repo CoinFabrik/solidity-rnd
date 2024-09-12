@@ -1,0 +1,216 @@
+{
+  "description": {
+    "project_name": "Virtuswap tokenomics",
+    "compiler_versions": ["0.8.0"]
+  },
+  "findings": [
+    {
+      "title": "Invalid Calculations",
+      "reported_impact": "high",
+      "reported_likelihood": "medium",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": [
+        "vChainMinter::_availableTokens()",
+        "vChainMinter::_availableTokensForNextEpoch()"
+      ],
+      "lines": "294,308",
+      "description": "In the `_availableTokens()` and `_availableTokensForNextEpoch()` functions, calculations are done incorrectly.\\n\\n Both functions are not taking into account that calculations from the block.timestamp can be greater than the divisor in the function equations.\\n\\n This can lead to a situation where the amount of tokens calculated is greater than the actual amount of rewards provided if the prepareForNextEpoch() function is not used correctly.\\n\\n In the `_availableTokensForNextEpoch()` function, the `epochDuration`  variable is used incorrectly in the dividend in case when the  `nextEpochDuration > 0`."
+    },
+    {
+      "title": "Invalid Calculations",
+      "reported_impact": "high",
+      "reported_likelihood": "high",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": [
+        "vGlobalMinter::setEpochParams()",
+        "vGlobalMinter::nextEpochTransfer()"
+      ],
+      "lines": "87-125",
+      "description": "Calling the setEpochParams() function with block.timestamp which makes the check block.timestamp >= startEpochTime + epochDuration pass will cause a partial lock of the rewards paid when calling nextEpochTransfer(). \\n\\nThis is driven by the fact that _epochTransition() is triggered and param startEpochTime used for reward calculation is forwarded to a new timestamp"
+    },
+    {
+      "title": "Token Supply Manipulation",
+      "reported_impact": "high",
+      "reported_likelihood": "medium",
+      "cwe_classification": 691,
+      "vulnerability_class": "MEV",
+      "vulnerability_subclass": "Transaction ordering dependency",
+      "vulnerable_functions": [
+        "vGlobalMinter::newVesting()",
+        "vGlobalMinter::arbitraryTransfer()"
+      ],
+      "lines": "62",
+      "description": "In the newVesting() and arbitraryTransfer() functions, the requirement to only release unlocked tokens is being executed incorrectly.\\n\\n The require(amount <= unlockedBalance) statement only checks that the amount is less than the unlockedBalance variable, but both functions should also reduce the remaining unlocked token balance.\\n\\n Lack of the unlockedBalance variable reduction can lead to a situation where more VRSW tokens are released than described in the tokenomy."
+    },
+    {
+      "title": "Denial of Service; Fund Lock",
+      "reported_impact": "high",
+      "reported_likelihood": "medium",
+      "cwe_classification": 362,
+      "vulnerability_class": "Denial of Service",
+      "vulnerability_subclass": "Race condition",
+      "vulnerable_functions": ["vChainMinter::setStakerFactory()"],
+      "lines": "91-96",
+      "description": "In the setStakerFactory() function, the stakerFactory variable can be changed even when the current vStakerFactory has active vStaker contracts with deposited user funds.\\n\\n In the event of changing the stakerFactory variable, users of the old vStaker contracts will not be able to claim their earned rewards. All calculations done in the vStaker contracts will be incorrect.\\n\\n Additionally, the setAllocationPoints() function will be affected, as the totalAllocationPoints variable will contain the old allocation points from the old vStakerFactory vStaker contracts.\\n\\n Changing the stakeFactory after it is set and in use will lead to an unusable staking system"
+    },
+    {
+      "title": "Invalid Calculations",
+      "reported_impact": "high",
+      "reported_likelihood": "low",
+      "cwe_classification": 682,
+      "vulnerability_class": "Arithmetic",
+      "vulnerability_subclass": "Incorrect Calculation",
+      "vulnerable_functions": ["vGlobalMinter::nextEpochTransfer()"],
+      "lines": "87-105",
+      "description": "In the nextEpochTransfer() function, there is a flaw in the logic of the epoch transition.\\n\\n In case of calling the nextEpochTransfer() for the first time after the emissionStartTs, the rewards for epoch 0 will be locked inside the contract."
+    },
+    {
+      "title": "Missing Validation",
+      "reported_impact": "medium",
+      "reported_likelihood": "medium",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validations and error handling",
+      "vulnerability_subclass": "Missing Zero Address Validation",
+      "vulnerable_functions": ["vVestingWallet::constructor()"],
+      "lines": "",
+      "description": "It is considered that the project should be consistent and contain no self-contradictions.\\n\\n According to implementation, the value beneficiary should be different from the 0x0 address. However, in the functions, the validation is missed.\\n\\n According to implementation, the value startTs should be greater than current time (block.timestamp). However, in the functions, the validation is missed.\\n\\n According to implementation, the value duration should be different from 0. However, in the functions, the validation is missed.\\n\\n According to implementation, the value amount should be different from 0. However, in the functions, the validation is missed.\\n\\nThis may lead to unexpected value processed by the contract."
+    },
+    {
+      "title": "Non-Finalized Code",
+      "reported_impact": "medium",
+      "reported_likelihood": "medium",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Non-Finalized Code",
+      "vulnerable_functions": ["vStakerFactory::createPoolStaker()"],
+      "lines": "59",
+      "description": "The code should not contain TODO comments. Otherwise, it means that the code is not finalized and additional changes will be introduced in the future."
+    },
+    {
+      "title": "Requirements Violation; Invalid Hardcoded Value",
+      "reported_impact": "medium",
+      "reported_likelihood": "medium",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Lack of documentation",
+      "vulnerable_functions": ["EmissionMath::_calculateEmission()"],
+      "lines": "80-95",
+      "description": "In the EmissionMath library, the constants V and v are declared. These variables are used in the calculation of the decreasing release schedule in the _calculateEmission() function. \\n\\nIn the requirement from the project whitepaper, it is stated that the amount released each year should be based on an annual percentage decrease of 20%.\\n\\n With the current values, the first year release is around 20% of the initial amount of rewards, but all the consecutive years are around 16.84% decrements.\\n\\n This leads to a situation where more tokens are released thanexpected."
+    },
+    {
+      "title": "Floating Pragma",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Unlocked pragma version",
+      "vulnerable_functions": [""],
+      "lines": "",
+      "description": "Locking the pragma helps ensure that contracts do not accidentally get deployed using, for example, an outdated compiler version that might introduce bugs that affect the contract system negatively."
+    },
+    {
+      "title": "Unscalable Functionality - Same Checks In Functions",
+      "reported_impact": "low",
+      "reported_likelihood": "medium",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Repeated code",
+      "vulnerable_functions": ["vStaker::"],
+      "lines": "",
+      "description": "It is considered that smart contract systems should be easily scalable.\\n\\nSame checks used in several functions overwhelm code and make further development difficult"
+    },
+    {
+      "title": "Missing Zero Address Validation",
+      "reported_impact": "medium",
+      "reported_likelihood": "low",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validations and error handling",
+      "vulnerability_subclass": "Missing Zero Address Validation",
+      "vulnerable_functions": [
+        "vStakerFactory::constructor()",
+        "vStaker::unlockVrsw()",
+        "vChainMinter::constructor()",
+        "vChainMinter::setStakerFactory()",
+        "vChainMinter::transferRewards()",
+        "vChainMinter::mintGVrsw()",
+        "vChainMinter::burnGVrsw()",
+        "GVrsw::mint()"
+      ],
+      "lines": "",
+      "description": "Address parameters are being used without checking against the possibility of 0x0.\\n\\nThis can lead to unwanted external calls to 0x0."
+    },
+    {
+      "title": "Best Practice Violation",
+      "reported_impact": "low",
+      "reported_likelihood": "medium",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Arrays lengths unchecked",
+      "vulnerable_functions": ["vChainMinter::setAllocationPoints()"],
+      "lines": "",
+      "description": "The input arrays are not validated for having equal lengths. This violates the best practices."
+    },
+    {
+      "title": "State Variables Can Be Declared Immutable",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Gas usage",
+      "vulnerable_functions": [
+        "vGlobalMinter::gVrsw()",
+        "vGlobalMinter::vrsw()"
+      ],
+      "lines": "22,23",
+      "description": "Variables gVrsw and vrsw values are only set in the constructor. Those variables can be declared as immutable. This will lower Gas usage."
+    },
+    {
+      "title": "Missing Validation",
+      "reported_impact": "low",
+      "reported_likelihood": "medium",
+      "cwe_classification": 20,
+      "vulnerability_class": "Validation",
+      "vulnerability_subclass": "Missing Input Validation",
+      "vulnerable_functions": ["vGlobalMinter::constructor()"],
+      "lines": "",
+      "description": "It is considered that the project should be consistent and contain no self-contradictions.\\n\\n Lack of validation of the _emissionStartTs argument in vGlobalMinter.sol constructor(). Emission should not start in the past. emissionStartTs should be in the future.\\n\\n This may lead to unexpected value processed by the contract."
+    },
+    {
+      "title": "Unauthorized Access",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 284,
+      "vulnerability_class": "Access control",
+      "vulnerability_subclass": "Authorization",
+      "vulnerable_functions": ["vVestingWallet::release()"],
+      "lines": "81",
+      "description": "The release() function can be called by anyone, allowing external users to release tokens on behalf of the beneficiary."
+    },
+    {
+      "title": "Missing Events",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 778,
+      "vulnerability_class": "Best practices",
+      "vulnerability_subclass": "Missing events",
+      "vulnerable_functions": ["vTokenomicsParams::constructor()"],
+      "lines": "",
+      "description": "Events for critical state changes should be emitted for tracking things off-chain.\\n\\n Missing event inside constructor() of vTokenomicsParams, tokenomics parameters are updated and UpdateTokenomicsParams should be emitted like in updateParams()."
+    },
+    {
+      "title": "NatSpec Comment Contradiction",
+      "reported_impact": "low",
+      "reported_likelihood": "low",
+      "cwe_classification": 0,
+      "vulnerability_class": "N/A",
+      "vulnerability_subclass": "",
+      "vulnerable_functions": ["vChainMinter::transferRewards()"],
+      "lines": "160",
+      "description": "It is considered that the project should be consistent and contain no self-contradictions.\\n\\n The NatSpec comments of the transferRewards() imply that the caller must be a registered staker with a non-zero allocation point.\\n\\n Actually, staker can have a non-zero allocation point, in case he had rewards before.\\n\\n This may lead to wrong assumptions about the code's purpose."
+    }
+  ]
+}
