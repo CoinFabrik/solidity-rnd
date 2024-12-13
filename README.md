@@ -1,4 +1,4 @@
-# goose dataset
+# Solidity Vulnerabilities Dataset
 
 This is a filesystem containing audited smart contracts which have been annotated for benchmarking security bug finding tools.
 
