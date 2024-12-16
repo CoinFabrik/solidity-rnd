@@ -1,5 +1,7 @@
 # Solidity RnD: Solidity Vulnerability Dataset
 
+![https://img.shields.io/badge/license-MIT-green](https://img.shields.io/badge/license-MIT-green)
+
 This is a filesystem containing audited smart contracts which have been annotated for benchmarking security bug finding tools.
 
 - For each project there is a copy of both the vulnerable and patched version of the GitHub repository from the audit report. In the `/vulnerable` folder you'll find the associated report and the `findings.json` file. This file contains all the vulnerabilities detected in the audit report in JSON format, including the description, impact, classification, class, and function of each vulnerability.
