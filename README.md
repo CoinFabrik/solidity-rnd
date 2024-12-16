@@ -1127,3 +1127,12 @@ This is a filesystem containing audited smart contracts which have been annotate
     - description: "Highly Permissive Role Access Account with PAUSER_ROLE can pause the transferability of the XARDM token. This leads to a situation where the deposit() and withdrawal() functions of the XARDMStaking contract are affected by a denial of service vulnerability. As both systems are closely connected and there is functionality to pause deposits and withdrawals directly in XARDMStaking, the pausable nature of the XARDM token seems redundant",
     - slither_output: []
     - slither_detect: 0
+
+
+## About
+
+This project is a public-private initiative between the [Fundación Sadosky](https://fundacionsadosky.org.ar/), the [LAFHIS](https://lafhis.dc.uba.ar/home) laboratory of the Faculty of Exact and Natural Sciences at the University of Buenos Aires (UBA), and [CoinFabrik](https://www.coinfabrik.com/)). While the LAFHIS laboratory researches cutting-edge techniques for vulnerability detection, CoinFabrik brings its extensive experience in the blockchain industry and the development of static analyzers. The support of Fundación Sadosky is key to advancing this research and development initiative.
+
+## License
+
+This project is licensed and distributed under a MIT license. [Contact us](https://www.coinfabrik.com/) if you're looking for an exception to the terms.
